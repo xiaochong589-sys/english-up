@@ -1047,11 +1047,8 @@ async function lookupWord(word){
     return;
   }
   try{
-    const raw=await callDeepSeek(
-      'You are a concise English dictionary. Return ONLY valid JSON, no extra text.',
-      'Look up the English word "'+w+'". Return JSON: {"phonetic":"/IPA/","zh":"中文释义（5字以内）","ex":"One short example sentence."}'
-      , 120
-    );
+    const lookupPrompt='Look up: '+w+'. Return JSON only: {"phonetic":"IPA","zh":"5字中文","ex":"Example."}';
+    const raw=await callDeepSeek('Dictionary. JSON only.', lookupPrompt, 80);
     const obj=safeJSON(raw);
     wordCache[w]=obj;
     fillPopup(word,obj);
@@ -1709,26 +1706,7 @@ async function initDailyVocab(){
   }
 
   const sys='You are an English vocabulary teacher. Return ONLY valid JSON, no markdown, no extra text.';
-  const usr=`Generate ${newWordsNeeded} B1-level English vocabulary words for a Chinese learner.
-
-Return a JSON array of exactly ${newWordsNeeded} objects:
-[
-  {
-    "word": "accomplish",
-    "phonetic": "/əˈkɒmplɪʃ/",
-    "zh": "完成；实现",
-    "ex": "She accomplished her goal.",
-    "tag": "new"
-  }
-]
-
-Rules:
-- B1 level: useful everyday/professional words, not too simple (avoid: big, good, run) and not too rare
-- Avoid these already-seen words: ${seenWords.slice(-30).join(', ')||'none'}
-- phonetic must be valid IPA notation
-- ex must be a short, natural example sentence using the word
-- zh must be concise accurate Chinese (10 characters max)
-- tag must be "new" for all`;
+  const usr='List '+newWordsNeeded+' B1 English words as JSON array. Each object: {word, phonetic(IPA), zh(Chinese max 6 chars), ex(example sentence), tag(new)}. Avoid: '+(seenWords.slice(-20).join(',')||'none')+'. Return ONLY JSON array.';
 
   try{
     const raw=await callDeepSeek(sys,usr,1200);
@@ -2107,47 +2085,30 @@ async function genAllArticles(){
   if(cached&&Array.isArray(cached)&&cached.length>=3){
     aiArticles=cached; injectAllArticles(); return;
   }
-
   if(!(window._runtimeAPIKey||DEEPSEEK_API_KEY)||((window._runtimeAPIKey||DEEPSEEK_API_KEY).startsWith('YOUR_'))){
-    setBanner('article','warn','请在代码中填入 DeepSeek API Key 以启用 AI 内容生成');
+    setBanner('article','warn','请先在首页设置 DeepSeek API Key');
     return;
   }
 
-  // Split into 3 batches of 2 articles to avoid token limits
-  const sys=`You are an English teacher. Return ONLY a valid JSON array of exactly 2 objects, no markdown, no extra text.`;
-
-  function makeArtPrompt(topicA, topicB, lenA, lenB){
-    return `Generate 2 B1-level English reading articles.
-
-Return JSON array of exactly 2 objects. Each has these fields:
-diff, topicEN, topicZH, wc, titleEN, titleZH, subEN, subZH, text, transZH, kw, qs.
-
-Object 1 topic: "${topicA}", ~${lenA} words.
-Object 2 topic: "${topicB}", ~${lenB} words.
-
-Format:
-[{"diff":"B1","topicEN":"2 words","topicZH":"主题","wc":"~${lenA} words","titleEN":"Title","titleZH":"标题","subEN":"Subtitle","subZH":"副标题","text":"Article body ~${lenA} words, \\n\\n for paragraphs, B1 vocabulary.","transZH":"完整中文翻译","kw":{"word1":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word2":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word3":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word4":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word5":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word6":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."}},"qs":[{"q":"Q?","opts":["A","B","C","D"],"ans":0},{"q":"Q?","opts":["A","B","C","D"],"ans":1},{"q":"Q?","opts":["A","B","C","D"],"ans":2}]},{"diff":"B1","topicEN":"2 words","topicZH":"主题","wc":"~${lenB} words","titleEN":"Title","titleZH":"标题","subEN":"Subtitle","subZH":"副标题","text":"Article body ~${lenB} words, \\n\\n for paragraphs.","transZH":"完整中文翻译","kw":{"word1":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word2":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word3":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word4":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word5":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word6":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."}},"qs":[{"q":"Q?","opts":["A","B","C","D"],"ans":0},{"q":"Q?","opts":["A","B","C","D"],"ans":1},{"q":"Q?","opts":["A","B","C","D"],"ans":2}]}]
-
-kw keys must be exact lowercase words from the text. transZH must be accurate simplified Chinese.`;
-  }
-
+  const sys=`English teacher. Return ONLY valid JSON array, no markdown.`;
+  const topics=ART_DIFF_PLAN.map((_,i)=>{const p=pickTopic(ART_TOPICS,i*17);return Array.isArray(p)?p[0]:p;});
   const allArticles=[];
-  const topics=ART_DIFF_PLAN.map((_,i)=>{
-    const pair=pickTopic(ART_TOPICS,i*17);
-    return Array.isArray(pair)?pair[0]:pair;
-  });
+
+  function artPrompt(t1,t2,len1,len2){
+    return `Write 2 B1 English articles as JSON array with 2 objects each having: diff("B1"), topicEN, topicZH, wc, titleEN, titleZH, subEN, subZH, text(${len1} words for #1, ${len2} words for #2, paragraphs with \\n\\n), transZH(Chinese translation), kw(6 key words each with zh/p/ex, keys must appear in text), qs(3 questions each with q/opts array of 4/ans index). Topics: #1="${t1}" #2="${t2}". Return only the JSON array.`;
+  }
 
   try{
     setBanner('article','loading','⟳ 生成文章（1/3）…');
-    const r1=await callDeepSeek(sys,makeArtPrompt(topics[0],topics[1],180,180),2500);
+    const r1=await callDeepSeek(sys, artPrompt(topics[0],topics[1],180,180), 2500);
     const b1=safeJSON(r1); if(Array.isArray(b1))allArticles.push(...b1.slice(0,2));
 
     setBanner('article','loading','⟳ 生成文章（2/3）…');
-    const r2=await callDeepSeek(sys,makeArtPrompt(topics[2],topics[3],280,280),3000);
+    const r2=await callDeepSeek(sys, artPrompt(topics[2],topics[3],280,280), 3000);
     const b2=safeJSON(r2); if(Array.isArray(b2))allArticles.push(...b2.slice(0,2));
 
     setBanner('article','loading','⟳ 生成文章（3/3）…');
-    const r3=await callDeepSeek(sys,makeArtPrompt(topics[4],topics[5],420,420),3500);
+    const r3=await callDeepSeek(sys, artPrompt(topics[4],topics[5],380,380), 3200);
     const b3=safeJSON(r3); if(Array.isArray(b3))allArticles.push(...b3.slice(0,2));
 
     if(allArticles.length<2)throw new Error('Too few articles: '+allArticles.length);
@@ -2178,21 +2139,7 @@ async function genAllScenes(){
   const sys=`You are an English speaking coach. Return ONLY valid JSON array, no markdown, no extra text.`;
   const topics=Array.from({length:8},(_,i)=>pickTopic(SPEAK_TOPICS,i*13));
 
-  const usr=`Generate 8 speaking practice scenarios for A2-B1 English learners.
-
-Return a JSON array of exactly 8 objects:
-{
-  "promptEN": "Clear one-sentence task (imperative).",
-  "promptZH": "对应中文指令。",
-  "frames": [
-    {"en":"Frame with <span class='blank'>___word___</span>.","zh":"中文框架。"},
-    {"en":"Frame with <span class='blank'>___word___</span>.","zh":"中文框架。"},
-    {"en":"Complete model sentence (no blanks).","zh":"完整中文句子。"}
-  ]
-}
-
-Topics: ${topics.map((t,i)=>`#${i+1}: "${t}"`).join(', ')}
-frames[0] and [1] have blanks, frames[2] is a complete sentence.`;
+  const usr=`Write 8 English speaking scenarios as JSON array. Each object: promptEN(task instruction), promptZH(Chinese), frames(3 items each with en/zh, first 2 have blanks as <span class='blank'>___word___</span>, third is complete sentence). Topics: ${topics.map((t,i)=>'#'+(i+1)+': "'+t+'"').join(', ')}. Return only JSON array.`;
 
   try{
     const raw=await callDeepSeek(sys,usr,2800);
@@ -2227,13 +2174,7 @@ async function genAllListening(){
   const sys=`You are an English listening comprehension author. Return ONLY valid JSON array of exactly 3 objects, no markdown, no extra text.`;
 
   function makeListenPrompt(t1,t2,t3){
-    return `Generate 3 B1-level listening passages.
-
-Return JSON array of exactly 3 objects:
-[{"titleEN":"Title","titleZH":"中文标题","level":"B1","defaultSpeed":1.0,"transcript":"100-130 words. Natural spoken English, B1 vocabulary. Can be monologue or dialogue (use 'Name: text' format for dialogue).","qs":[{"q":"Q?","opts":["A","B","C"],"ans":0},{"q":"Q?","opts":["A","B","C"],"ans":1}]},...]
-
-Topics: 1="${t1}", 2="${t2}", 3="${t3}"
-All level="B1", defaultSpeed=1.0.`;
+    return `Write 3 B1 English listening passages as JSON array. Each: titleEN, titleZH, level("B1"), defaultSpeed(1.0), transcript(100-120 words natural speech, dialogue uses "Name: text" format), qs(2 questions each with q/opts 3 items/ans index). Topics: "${t1}", "${t2}", "${t3}". Return only JSON array.`;
   }
 
   try{
@@ -2284,26 +2225,7 @@ async function genNCE2Lessons(){
 
   const lessonInfo=todayLessons.map(l=>`Lesson ${l.n}: "${l.title}" (${l.zh})`).join('; ');
 
-  const usr=`Generate 3 New Concept English Book 2 lessons as listening/reading passages.
-
-Lessons: ${lessonInfo}
-
-Return a JSON array of exactly 3 objects:
-{
-  "titleEN": "Lesson N: Title",
-  "titleZH": "第N课：中文标题",
-  "lessonNum": 1,
-  "level": "B1",
-  "defaultSpeed": 1.0,
-  "transcript": "Write the lesson as a short engaging story/dialogue in the style of New Concept English Book 2. 80-120 words. Keep the spirit and approximate scenario of the original NCE2 lesson — a funny or interesting short story. Use simple grammar appropriate to the lesson number (early lessons simpler).",
-  "transZH": "Complete Chinese translation of the transcript.",
-  "qs": [
-    {"q":"Question?","opts":["A","B","C"],"ans":0},
-    {"q":"Question?","opts":["A","B","C"],"ans":1}
-  ]
-}
-
-IMPORTANT: Create stories that capture the humour and style of New Concept English. Early lessons (1-30) use simple present/past. Later lessons use more complex structures.`;
+  const usr=`Write 3 New Concept English Book 2 lessons as JSON array. Each: titleEN, titleZH, lessonNum, level("B1"), defaultSpeed(0.9), transcript(80-100 words humorous story in NCE2 style), transZH(Chinese translation), qs(2 questions each with q/opts 3/ans). Lessons: ${lessonInfo}. Return only JSON array.`;
 
   try{
     const raw=await callDeepSeek(sys,usr,2000);
