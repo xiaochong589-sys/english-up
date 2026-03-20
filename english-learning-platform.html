@@ -1677,7 +1677,7 @@ async function initDailyVocab(){
 
   // 计算需要生成的新词数量
   const carryWords=getCarryWords(progress);
-  const newWordsNeeded=Math.max(0,15-carryWords.length);
+  const newWordsNeeded=Math.max(0,10-carryWords.length);
 
   if(newWordsNeeded===0){
     // 全部是补推词，不需要生成新词
@@ -1690,7 +1690,7 @@ async function initDailyVocab(){
     return;
   }
 
-  setBanner('vocab','loading','⟳ AI 正在生成今日词汇（'+newWordsNeeded+' 个新词）…');
+  setBanner('vocab','loading','⟳ 生成今日词汇…');
 
   // Already-seen words to avoid repeats
   const seenWords=Object.values(progress).flatMap(d=>(d.words||[]).map(w=>w.word)).slice(-100);
@@ -1709,7 +1709,7 @@ async function initDailyVocab(){
   const usr='List '+newWordsNeeded+' B1 English words as JSON array. Each object: {word, phonetic(IPA), zh(Chinese max 6 chars), ex(example sentence), tag(new)}. Avoid: '+(seenWords.slice(-20).join(',')||'none')+'. Return ONLY JSON array.';
 
   try{
-    const raw=await callDeepSeek(sys,usr,1200);
+    const raw=await callDeepSeek(sys,usr,800);
     const arr=safeJSON(raw);
     if(!Array.isArray(arr))throw new Error('not array');
     const newWords=arr.slice(0,newWordsNeeded).map(w=>({
@@ -2085,41 +2085,43 @@ async function genAllArticles(){
   if(cached&&Array.isArray(cached)&&cached.length>=3){
     aiArticles=cached; injectAllArticles(); return;
   }
-  if(!(window._runtimeAPIKey||DEEPSEEK_API_KEY)||((window._runtimeAPIKey||DEEPSEEK_API_KEY).startsWith('YOUR_'))){
+  if(!(window._runtimeAPIKey||DEEPSEEK_API_KEY)||
+     (window._runtimeAPIKey||DEEPSEEK_API_KEY).startsWith('YOUR_')){
     setBanner('article','warn','请先在首页设置 DeepSeek API Key');
     return;
   }
 
-  const sys=`English teacher. Return ONLY valid JSON array, no markdown.`;
+  const sys='English teacher. Return ONLY valid compact JSON, no markdown, no whitespace.';
   const topics=ART_DIFF_PLAN.map((_,i)=>{const p=pickTopic(ART_TOPICS,i*17);return Array.isArray(p)?p[0]:p;});
   const allArticles=[];
 
-  function artPrompt(t1,t2,len1,len2){
-    return `Write 2 B1 English articles as JSON array with 2 objects each having: diff("B1"), topicEN, topicZH, wc, titleEN, titleZH, subEN, subZH, text(${len1} words for #1, ${len2} words for #2, paragraphs with \\n\\n), transZH(Chinese translation), kw(6 key words each with zh/p/ex, keys must appear in text), qs(3 questions each with q/opts array of 4/ans index). Topics: #1="${t1}" #2="${t2}". Return only the JSON array.`;
+  // Generate ONE article at a time to avoid large responses
+  for(let i=0;i<Math.min(topics.length,6);i++){
+    setBanner('article','loading','⟳ 生成文章（'+(i+1)+'/6）…');
+    const wlen = i<2?180 : i<4?260 : 340;
+    const prompt='Write 1 B1 English article on "'+topics[i]+'" (~'+wlen+' words). '+
+      'Return a single JSON object (not array): {diff:"B1",topicEN:"2words",topicZH:"主题",wc:"~'+wlen+' words",'+
+      'titleEN:"Title",titleZH:"标题",subEN:"Sub",subZH:"副标题",'+
+      'text:"Article ~'+wlen+' words, \\n\\n paragraphs.",'+
+      'transZH:"中文翻译",'+
+      'kw:{word1:{zh:"释义",p:"/IPA/",ex:"Ex."},word2:{zh:"释义",p:"/IPA/",ex:"Ex."},'+
+      'word3:{zh:"释义",p:"/IPA/",ex:"Ex."},word4:{zh:"释义",p:"/IPA/",ex:"Ex."}},'+
+      'qs:[{q:"Q1?",opts:["A","B","C","D"],ans:0},{q:"Q2?",opts:["A","B","C","D"],ans:1},{q:"Q3?",opts:["A","B","C","D"],ans:2}]}. '+
+      'kw keys must be exact lowercase words from text.';
+    try{
+      const raw=await callDeepSeek(sys,prompt,1000);
+      const obj=safeJSON(raw);
+      if(obj&&obj.titleEN){allArticles.push(obj);}
+    }catch(e){
+      console.warn('Article '+(i+1)+' error:',e.message);
+    }
   }
 
-  try{
-    setBanner('article','loading','⟳ 生成文章（1/3）…');
-    const r1=await callDeepSeek(sys, artPrompt(topics[0],topics[1],180,180), 2500);
-    const b1=safeJSON(r1); if(Array.isArray(b1))allArticles.push(...b1.slice(0,2));
-
-    setBanner('article','loading','⟳ 生成文章（2/3）…');
-    const r2=await callDeepSeek(sys, artPrompt(topics[2],topics[3],280,280), 3000);
-    const b2=safeJSON(r2); if(Array.isArray(b2))allArticles.push(...b2.slice(0,2));
-
-    setBanner('article','loading','⟳ 生成文章（3/3）…');
-    const r3=await callDeepSeek(sys, artPrompt(topics[4],topics[5],380,380), 3200);
-    const b3=safeJSON(r3); if(Array.isArray(b3))allArticles.push(...b3.slice(0,2));
-
-    if(allArticles.length<2)throw new Error('Too few articles: '+allArticles.length);
-    allArticles.forEach(a=>{a.isAI=true;a.aiDate=getTodayStr();a.diff='B1';});
-    await saveCache('articles_all',allArticles);
-    aiArticles=allArticles; injectAllArticles();
-    setBanner('article','done','✦ 今日'+allArticles.length+'篇文章已生成');
-  }catch(e){
-    console.warn('genAllArticles error:',e.message);
-    handleAIError('article',e);
-  }
+  if(allArticles.length<1)throw new Error('No articles generated');
+  allArticles.forEach(a=>{a.isAI=true;a.aiDate=getTodayStr();a.diff='B1';});
+  await saveCache('articles_all',allArticles);
+  aiArticles=allArticles; injectAllArticles();
+  setBanner('article','done','✦ 今日'+allArticles.length+'篇文章已生成');
 }
 // ============================================================
 // 生成全部 8 个口语场景
@@ -2139,12 +2141,12 @@ async function genAllScenes(){
   const sys=`You are an English speaking coach. Return ONLY valid JSON array, no markdown, no extra text.`;
   const topics=Array.from({length:8},(_,i)=>pickTopic(SPEAK_TOPICS,i*13));
 
-  const usr=`Write 8 English speaking scenarios as JSON array. Each object: promptEN(task instruction), promptZH(Chinese), frames(3 items each with en/zh, first 2 have blanks as <span class='blank'>___word___</span>, third is complete sentence). Topics: ${topics.map((t,i)=>'#'+(i+1)+': "'+t+'"').join(', ')}. Return only JSON array.`;
+  const usr='Write 4 English speaking scenarios for A2-B1 learners as a compact JSON array. Each: {promptEN,promptZH,frames:[{en,zh},{en,zh},{en,zh}]}. frames[0],[1] have blanks as <blank>___word___</blank>, frames[2] complete. Topics: '+topics.slice(0,4).map((t,i)=>'#'+(i+1)+':"'+t+'"').join(',')+'. Return only JSON array.';
 
   try{
-    const raw=await callDeepSeek(sys,usr,2800);
+    const raw=await callDeepSeek(sys,usr,1500);
     let arr=safeJSON(raw);
-    if(!Array.isArray(arr)||arr.length<4)throw new Error('Too few scenes: '+arr.length);
+    if(!Array.isArray(arr)||arr.length<1)throw new Error('Too few scenes: '+arr.length);
     // Accept 4-8 scenes — pad if needed
     if(arr.length>8)arr=arr.slice(0,8);
     arr.forEach(s=>{s.isAI=true;s.aiDate=getTodayStr();});
@@ -2173,19 +2175,19 @@ async function genAllListening(){
 
   const sys=`You are an English listening comprehension author. Return ONLY valid JSON array of exactly 3 objects, no markdown, no extra text.`;
 
-  function makeListenPrompt(t1,t2,t3){
-    return `Write 3 B1 English listening passages as JSON array. Each: titleEN, titleZH, level("B1"), defaultSpeed(1.0), transcript(100-120 words natural speech, dialogue uses "Name: text" format), qs(2 questions each with q/opts 3 items/ans index). Topics: "${t1}", "${t2}", "${t3}". Return only JSON array.`;
+  function makeListenPrompt(t1,t2){
+    return 'Write 2 B1 English listening passages as compact JSON array. Each: {titleEN,titleZH,level:"B1",defaultSpeed:1.0,transcript:"90-100 words natural speech",qs:[{q,opts:[3 items],ans},{q,opts:[3 items],ans}]}. Topics: "'+t1+'", "'+t2+'". Return only JSON array.';
   }
 
   try{
     const topics=Array.from({length:6},(_,i)=>pickTopic(LISTEN_TOPICS,i*11));
 
     setBanner('listening','loading', lang==='zh'?'⟳ 生成听力（1/2）…':'⟳ Listening 1/2…');
-    const raw1=await callDeepSeek(sys, makeListenPrompt(topics[0],topics[1],topics[2]), 2000);
+    const raw1=await callDeepSeek(sys, makeListenPrompt(topics[0],topics[1]), 1200);
     const batch1=safeJSON(raw1);
 
     setBanner('listening','loading', lang==='zh'?'⟳ 生成听力（2/2）…':'⟳ Listening 2/2…');
-    const raw2=await callDeepSeek(sys, makeListenPrompt(topics[3],topics[4],topics[5]), 2000);
+    const raw2=await callDeepSeek(sys, makeListenPrompt(topics[2],topics[3]), 1200);
     const batch2=safeJSON(raw2);
 
     const arr=[
@@ -2228,9 +2230,17 @@ async function genNCE2Lessons(){
   const usr=`Write 3 New Concept English Book 2 lessons as JSON array. Each: titleEN, titleZH, lessonNum, level("B1"), defaultSpeed(0.9), transcript(80-100 words humorous story in NCE2 style), transZH(Chinese translation), qs(2 questions each with q/opts 3/ans). Lessons: ${lessonInfo}. Return only JSON array.`;
 
   try{
-    const raw=await callDeepSeek(sys,usr,2000);
-    const arr=safeJSON(raw);
-    if(!Array.isArray(arr)||arr.length<1)throw new Error('No NCE2 lessons returned');
+    const arr=[];
+    for(let ni=0;ni<todayLessons.length;ni++){
+      const ln=todayLessons[ni];
+      const p='Write a New Concept English Book 2 lesson as a single compact JSON object (not array). Lesson '+ln.n+': "'+ln.title+'" ('+ln.zh+'). Fields: {titleEN:"Lesson '+ln.n+': '+ln.title+'",titleZH:"第'+ln.n+'课：'+ln.zh+'",lessonNum:'+ln.n+',level:"B1",defaultSpeed:0.9,transcript:"70-90 words humorous NCE2-style story",transZH:"中文翻译",qs:[{q,opts:[3],ans},{q,opts:[3],ans}]}. Return only the JSON object.';
+      try{
+        const r=await callDeepSeek(sys,p,700);
+        const o=safeJSON(r);
+        if(o&&o.transcript)arr.push(o);
+      }catch(e){console.warn('NCE2 lesson '+ln.n+' error:',e.message);}
+    }
+    if(arr.length<1)throw new Error('No NCE2 lessons returned');
     arr.forEach((c,i)=>{
       c.isAI=true; c.aiDate=getTodayStr();
       c.isNCE2=true;
