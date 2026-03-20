@@ -1,0 +1,2625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EnglishUp</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1410;--paper:#f5f0e8;--warm:#e8dcc8;--accent:#c17f3a;--accent2:#4a7c6f;--accent3:#8b3a52;--muted:#7a6f5e;--card:#faf7f2;--border:#d5c8b0;--hl:#f0e6c8;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Lora',Georgia,serif;background:var(--paper);color:var(--ink);min-height:100vh;background-image:radial-gradient(ellipse at 10% 20%,rgba(193,127,58,.06) 0%,transparent 60%),radial-gradient(ellipse at 90% 80%,rgba(74,124,111,.06) 0%,transparent 60%);}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;border-bottom:1.5px solid var(--border);background:rgba(245,240,232,.97);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100;gap:12px;flex-wrap:wrap;}
+.logo{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--accent);}
+.logo span{color:var(--ink);font-style:italic;}
+.nav-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.nav-tabs{display:flex;gap:5px;flex-wrap:wrap;}
+.nav-tab{padding:6px 13px;border-radius:6px;border:1.5px solid var(--border);background:transparent;font-family:'Lora',serif;font-size:.8rem;color:var(--muted);cursor:pointer;transition:all .2s;}
+.nav-tab:hover{background:var(--warm);color:var(--ink);}
+.nav-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.lang-toggle{padding:6px 14px;border-radius:20px;border:1.5px solid var(--accent);background:transparent;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--accent);cursor:pointer;transition:all .2s;letter-spacing:.5px;}
+.lang-toggle:hover{background:var(--accent);color:#fff;}
+main{max-width:980px;margin:0 auto;padding:32px 20px 80px;}
+.section{display:none;}
+.section.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--ink) 0%,#2d2218 100%);color:var(--paper);border-radius:16px;padding:32px 38px;margin-bottom:28px;position:relative;overflow:hidden;}
+.hero::before{content:'"';position:absolute;right:26px;top:-16px;font-family:'Playfair Display',serif;font-size:180px;color:rgba(255,255,255,.04);line-height:1;}
+.hero h1{font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:8px;}
+.hero h1 em{color:var(--accent);font-style:italic;}
+.hero p{color:rgba(245,240,232,.65);font-size:.86rem;max-width:500px;line-height:1.7;}
+.hero-stats{display:flex;gap:26px;margin-top:20px;}
+.stat-num{font-family:'DM Mono',monospace;font-size:1.5rem;color:var(--accent);}
+.stat-label{font-size:.7rem;color:rgba(245,240,232,.45);margin-top:1px;}
+.level-badge{display:inline-block;margin-top:12px;background:var(--accent);color:#fff;padding:3px 13px;border-radius:20px;font-family:'DM Mono',monospace;font-size:.76rem;letter-spacing:1px;}
+.day-banner{background:rgba(193,127,58,.15);border:1px solid rgba(193,127,58,.3);border-radius:8px;padding:8px 14px;margin-top:14px;font-size:.8rem;color:rgba(245,240,232,.8);}
+
+/* CARDS */
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:20px;transition:box-shadow .2s,transform .2s;}
+.card:hover{box-shadow:0 6px 20px rgba(26,20,16,.1);transform:translateY(-2px);}
+.card-tag{font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.card h3{font-size:.97rem;margin-bottom:4px;}
+.card p{font-size:.79rem;color:var(--muted);line-height:1.6;}
+.card-btn{margin-top:12px;display:inline-block;padding:6px 16px;border-radius:8px;border:1.5px solid var(--accent);color:var(--accent);font-size:.78rem;cursor:pointer;background:transparent;font-family:'Lora',serif;transition:all .2s;}
+.card-btn:hover,.card-btn.primary{background:var(--accent);color:#fff;}
+.card-btn.primary:hover{background:#a06830;}
+
+/* READING */
+.reading-article{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:28px;margin-bottom:16px;}
+.article-meta{display:flex;gap:9px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+.diff-badge{padding:2px 8px;border-radius:20px;font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:1px;}
+.diff-a2{background:#fff3cd;color:#856404;}.diff-b1{background:#fde8d8;color:#8b4513;}
+.topic-badge{padding:2px 8px;border-radius:20px;background:var(--hl);color:var(--muted);font-size:.68rem;font-family:'DM Mono',monospace;}
+.article-title{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:4px;}
+.article-subtitle{color:var(--muted);font-size:.8rem;margin-bottom:16px;font-style:italic;}
+.article-body{line-height:2.1;font-size:.93rem;}
+.article-body p{margin-bottom:12px;}
+.art-word,.word-hl{display:inline;cursor:pointer;border-radius:2px;padding:0 1px;line-height:inherit;transition:background .1s;}
+.art-word:hover{background:var(--hl);}
+.word-hl{background:var(--hl);border-bottom:2px solid var(--accent);padding:0 2px;}
+.word-hl:hover{background:#e8d5a0;}
+
+/* Word popup */
+#word-popup{display:none;position:fixed;background:var(--ink);color:var(--paper);padding:12px 15px;border-radius:10px;font-size:.8rem;z-index:9999;min-width:210px;max-width:285px;line-height:1.7;box-shadow:0 8px 28px rgba(0,0,0,.38);}
+#word-popup .arr{position:absolute;top:100%;left:20px;border:7px solid transparent;border-top-color:var(--ink);}
+#word-popup .pw{font-family:'Playfair Display',serif;font-size:1.05rem;margin-bottom:1px;}
+#word-popup .pp{font-family:'DM Mono',monospace;font-size:.68rem;color:rgba(245,240,232,.5);}
+#word-popup .pz{color:var(--accent);font-weight:600;margin-top:4px;font-size:.84rem;}
+#word-popup .pe{color:rgba(245,240,232,.58);font-style:italic;font-size:.75rem;margin-top:3px;}
+#word-popup .pa{display:flex;gap:6px;margin-top:8px;}
+#word-popup .pb{padding:3px 9px;border-radius:6px;border:1px solid rgba(245,240,232,.25);background:rgba(255,255,255,.1);color:var(--paper);font-size:.72rem;cursor:pointer;font-family:'Lora',serif;transition:background .12s;}
+#word-popup .pb:hover{background:rgba(255,255,255,.2);}
+#word-popup .pb.add{background:var(--accent);border-color:var(--accent);}
+#word-popup .pb.add:hover{background:#a06830;}
+#word-popup .pb.added{background:var(--accent2);border-color:var(--accent2);}
+
+.reading-controls{display:flex;gap:7px;margin-top:16px;flex-wrap:wrap;}
+.ctrl-btn{padding:6px 13px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);font-family:'Lora',serif;font-size:.78rem;color:var(--ink);cursor:pointer;transition:all .2s;}
+.ctrl-btn:hover{background:var(--warm);border-color:var(--accent);}
+.ctrl-btn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+.art-pills{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;}
+.art-pill{padding:4px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:.76rem;cursor:pointer;transition:all .2s;font-family:'Lora',serif;}
+.art-pill:hover{border-color:var(--accent);color:var(--accent);}
+.art-pill.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+#translation-box{display:none;background:var(--hl);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;margin-top:12px;font-size:.81rem;line-height:1.9;color:var(--muted);font-style:italic;}
+.questions-box{background:var(--hl);border:1.5px solid var(--border);border-radius:12px;padding:20px;margin-top:16px;display:none;}
+.questions-box h4{font-size:.8rem;color:var(--muted);margin-bottom:12px;font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
+.question{margin-bottom:16px;}
+.question p{font-size:.84rem;margin-bottom:8px;font-weight:600;}
+.options{display:flex;flex-direction:column;gap:5px;}
+.option{padding:7px 13px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);font-size:.79rem;cursor:pointer;transition:background .12s,border-color .12s;text-align:left;font-family:'Lora',serif;width:100%;}
+.option:hover{background:var(--warm);border-color:var(--accent);}
+.option.correct{background:#d4edda;border-color:#4a7c6f;color:#2d6a4f;}
+.option.wrong{background:#f8d7da;border-color:#842029;color:#842029;}
+.next-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-family:'Lora',serif;font-size:.83rem;cursor:pointer;transition:all .2s;margin-top:12px;}
+.next-btn:hover{background:var(--accent);}
+.today-badge{display:inline-block;background:var(--accent);color:#fff;font-family:'DM Mono',monospace;font-size:.62rem;padding:1px 8px;border-radius:10px;margin-left:8px;vertical-align:middle;letter-spacing:.5px;}
+
+/* SPEAKING */
+.speaking-hero{background:linear-gradient(135deg,var(--accent2) 0%,#2d5048 100%);color:#fff;border-radius:12px;padding:24px 28px;margin-bottom:20px;}
+.speaking-hero h2{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:4px;}
+.speaking-hero p{opacity:.78;font-size:.81rem;line-height:1.6;}
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.scenario-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;text-align:center;position:relative;}
+.scenario-card:hover{border-color:var(--accent2);transform:translateY(-2px);}
+.scenario-card.active{border-color:var(--accent2);background:rgba(74,124,111,.08);}
+.scenario-card h4{font-size:.84rem;margin-bottom:2px;}
+.scenario-card p{font-size:.71rem;color:var(--muted);}
+.practice-area{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:24px;}
+.prompt-box{background:var(--ink);color:var(--paper);border-radius:10px;padding:16px 20px;margin-bottom:16px;}
+.prompt-label{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:2px;color:var(--accent);margin-bottom:6px;}
+.prompt-text{font-size:.95rem;line-height:1.7;}
+.prompt-zh{color:rgba(245,240,232,.48);font-size:.78rem;margin-top:4px;font-style:italic;}
+.sentence-builder h4{font-size:.8rem;color:var(--muted);margin-bottom:9px;font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
+.frame{background:var(--hl);border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:.83rem;line-height:1.6;cursor:pointer;transition:all .2s;margin-bottom:6px;}
+.frame:hover{border-color:var(--accent);background:#ead9b0;}
+.blank{display:inline;border-bottom:2px solid var(--accent);color:var(--accent);font-style:italic;}
+.zh-hint{color:var(--muted);font-size:.74rem;margin-top:2px;}
+.mic-area{display:flex;flex-direction:column;align-items:center;padding:20px;border:2px dashed var(--border);border-radius:12px;margin:16px 0;}
+.waveform{display:flex;align-items:center;gap:3px;height:36px;margin-top:6px;}
+.wave-bar{width:4px;background:var(--accent2);border-radius:2px;opacity:.25;height:7px;}
+.wave-bar.active{opacity:1;animation:wave .8s infinite ease-in-out;}
+@keyframes wave{0%,100%{height:7px}50%{height:25px}}
+.wave-bar:nth-child(2){animation-delay:.1s}.wave-bar:nth-child(3){animation-delay:.2s}.wave-bar:nth-child(4){animation-delay:.3s}.wave-bar:nth-child(5){animation-delay:.15s}.wave-bar:nth-child(6){animation-delay:.25s}.wave-bar:nth-child(7){animation-delay:.05s}
+.mic-btn{width:60px;height:60px;border-radius:50%;background:var(--accent2);border:none;cursor:pointer;font-size:.72rem;font-family:'DM Mono',monospace;font-weight:500;letter-spacing:1px;color:#fff;transition:all .2s;box-shadow:0 4px 12px rgba(74,124,111,.3);margin-top:9px;}
+.mic-btn:hover{transform:scale(1.08);}
+.mic-btn.recording{background:var(--accent3);animation:pulse 1.2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 4px 12px rgba(139,58,82,.4);transform:scale(1)}50%{box-shadow:0 4px 26px rgba(139,58,82,.7);transform:scale(1.05)}}
+.mic-label{margin-top:9px;font-size:.78rem;color:var(--muted);}
+.mic-timer{font-family:'DM Mono',monospace;color:var(--accent3);font-size:.94rem;margin-top:2px;display:none;}
+.mic-timer.active{display:block;}
+.feedback-box{background:#f0f7f4;border:1.5px solid #4a7c6f;border-radius:10px;padding:14px 18px;display:none;margin-bottom:14px;}
+.feedback-box.show{display:block;animation:fadeIn .4s ease;}
+.feedback-box h4{color:var(--accent2);font-size:.8rem;margin-bottom:7px;font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
+.feedback-item{font-size:.81rem;margin-bottom:4px;}
+.shadow-area{margin-top:16px;}
+.shadow-area h4{font-size:.78rem;color:var(--muted);margin-bottom:9px;font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
+.shadow-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.shadow-btn{padding:7px 16px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);font-family:'Lora',serif;font-size:.79rem;color:var(--ink);cursor:pointer;transition:all .2s;}
+.shadow-btn:hover{background:var(--warm);border-color:var(--accent2);}
+.shadow-btn.playing{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+
+/* VOCAB */
+.vocab-bank{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+.vocab-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px 14px 20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.vocab-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent);border-radius:2px 0 0 2px;}
+.vocab-card.added-word::before{background:#7a3a9c;}
+.vocab-card:hover{box-shadow:0 4px 14px rgba(26,20,16,.1);transform:translateY(-2px);}
+.vocab-word{font-size:1.02rem;font-weight:600;margin-bottom:2px;}
+.vocab-phonetic{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-bottom:4px;}
+.vocab-zh{font-size:.81rem;color:var(--accent);}
+.vocab-example{font-size:.74rem;color:var(--muted);font-style:italic;margin-top:4px;line-height:1.5;}
+.vocab-tag{position:absolute;top:10px;right:11px;font-family:'DM Mono',monospace;font-size:.61rem;padding:2px 6px;border-radius:10px;}
+.tag-new{background:#fff3cd;color:#856404;}
+.tag-review{background:#d4edda;color:#2d6a4f;}
+.tag-mastered{background:var(--hl);color:var(--muted);}
+.tag-added{background:#ead5f5;color:#6a3a8c;}
+.vocab-test-btns{display:flex;gap:8px;margin-bottom:16px;}
+.vtest-btn{padding:7px 16px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);font-family:'Lora',serif;font-size:.79rem;color:var(--ink);cursor:pointer;transition:all .2s;}
+.vtest-btn:hover{background:var(--warm);border-color:var(--accent);}
+
+/* Vocab test modal */
+#vtest-modal{display:none;position:fixed;inset:0;background:rgba(26,20,16,.55);z-index:5000;align-items:center;justify-content:center;}
+#vtest-modal.open{display:flex;}
+.vtest-box{background:var(--paper);border-radius:16px;padding:30px;max-width:460px;width:92%;box-shadow:0 12px 40px rgba(0,0,0,.28);text-align:center;}
+.vtest-box h3{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:5px;}
+.vt-sub{font-size:.78rem;color:var(--muted);margin-bottom:18px;}
+.vtest-word{font-size:2rem;font-family:'Playfair Display',serif;color:var(--ink);margin-bottom:6px;letter-spacing:1px;}
+.vtest-hint{font-size:.76rem;color:var(--muted);margin-bottom:6px;font-style:italic;}
+.vtest-spell-hint{font-size:.85rem;color:var(--muted);margin-bottom:14px;}
+.pronun-area{margin:14px 0;}
+.pronun-listen-btn{padding:10px 24px;border-radius:30px;border:none;background:var(--accent);color:#fff;font-family:'Lora',serif;font-size:.88rem;cursor:pointer;transition:all .2s;margin-bottom:12px;}
+.pronun-listen-btn:hover{background:#a06830;}
+.pronun-record-btn{padding:10px 24px;border-radius:30px;border:2px solid var(--accent2);background:transparent;color:var(--accent2);font-family:'Lora',serif;font-size:.88rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;margin:0 auto;}
+.pronun-record-btn:hover,.pronun-record-btn.rec{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+.pronun-feedback{margin-top:12px;font-size:.88rem;min-height:22px;font-weight:600;}
+.pronun-feedback.ok{color:var(--accent2);}
+.pronun-feedback.no{color:#842029;}
+.pronun-feedback.neutral{color:var(--muted);}
+.vtest-input{width:100%;padding:9px 13px;border:2px solid var(--border);border-radius:8px;font-size:.97rem;font-family:'Lora',serif;background:var(--card);color:var(--ink);margin-bottom:10px;text-align:center;}
+.vtest-input:focus{outline:none;border-color:var(--accent);}
+.vtest-input.right{border-color:var(--accent2);background:#d4edda;}
+.vtest-input.wrong{border-color:#842029;background:#f8d7da;}
+.vtest-feedback{font-size:.83rem;min-height:18px;margin-bottom:12px;font-weight:600;}
+.vtest-feedback.ok{color:var(--accent2);}
+.vtest-feedback.no{color:#842029;}
+.vtest-btns{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;}
+.vt-btn{padding:7px 18px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);font-family:'Lora',serif;font-size:.8rem;cursor:pointer;transition:all .2s;}
+.vt-btn:hover{background:var(--warm);}
+.vt-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.vt-btn.primary:hover{background:#a06830;}
+.vtest-score{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);margin-top:10px;}
+.sr-unavail{font-size:.78rem;color:var(--muted);font-style:italic;margin-top:6px;}
+
+/* LISTENING */
+.listen-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:20px;margin-bottom:12px;}
+.listen-card h3{font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:2px;}
+.listen-meta{font-size:.72rem;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:12px;display:flex;gap:10px;flex-wrap:wrap;}
+.audio-player{display:flex;align-items:center;gap:11px;background:var(--ink);border-radius:10px;padding:11px 14px;margin-bottom:11px;}
+.play-btn{width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;color:#fff;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.play-btn:hover{background:#a06830;}
+.audio-info{flex:1;min-width:0;}
+.audio-title{color:var(--paper);font-size:.79rem;margin-bottom:4px;}
+.audio-bar{width:100%;height:4px;background:rgba(255,255,255,.13);border-radius:2px;cursor:pointer;}
+.audio-progress{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .35s;}
+.audio-time{color:rgba(245,240,232,.45);font-family:'DM Mono',monospace;font-size:.66rem;margin-top:4px;}
+.speed-btns{display:flex;gap:3px;flex-shrink:0;}
+.speed-btn{padding:3px 7px;border-radius:4px;border:1px solid rgba(255,255,255,.18);background:transparent;color:rgba(245,240,232,.55);font-family:'DM Mono',monospace;font-size:.65rem;cursor:pointer;transition:all .2s;}
+.speed-btn:hover{border-color:var(--accent);color:var(--accent);}
+.speed-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.listen-transcript{background:var(--hl);border-radius:8px;padding:13px 15px;font-size:.84rem;line-height:1.9;margin-bottom:12px;display:none;border-left:3px solid var(--accent);}
+.listen-transcript.show{display:block;animation:fadeIn .3s ease;}
+.listen-controls{display:flex;gap:7px;flex-wrap:wrap;}
+.listen-q-box{background:var(--hl);border:1.5px solid var(--border);border-radius:10px;padding:16px;display:none;margin-top:10px;}
+.listen-q-box.show{display:block;animation:fadeIn .3s ease;}
+.listen-q-box h4{font-size:.78rem;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+.listen-pills{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;}
+.listen-pill{padding:4px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:.76rem;cursor:pointer;transition:all .2s;font-family:'Lora',serif;}
+.listen-pill:hover{border-color:var(--accent2);}
+.listen-pill.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+
+/* Toast */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--ink);color:var(--paper);padding:8px 18px;border-radius:28px;font-size:.78rem;font-family:'Lora',serif;z-index:9997;transition:transform .3s ease;box-shadow:0 4px 18px rgba(0,0,0,.3);white-space:nowrap;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* Progress */
+.day-progress{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px;}
+.dp-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.dp-label{font-size:.76rem;color:var(--muted);width:80px;flex-shrink:0;}
+.dp-bar{flex:1;height:6px;background:var(--warm);border-radius:3px;overflow:hidden;}
+.dp-fill{height:100%;background:var(--accent);border-radius:3px;transition:width 1s ease;}
+.dp-count{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--accent);width:36px;text-align:right;}
+
+@media(max-width:680px){
+  nav{padding:10px 12px;gap:6px;}
+  main{padding:16px 12px 60px;}
+  .cards-grid,.vocab-bank,.scenario-grid,.sound-cards,
+  
+  .hero{padding:20px 16px;}
+  
+}
+
+/* ===== KIDS SECTION ===== */
+.kids-level-bar{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap;}
+.kids-lvl-btn{display:flex;flex-direction:column;align-items:center;padding:10px 20px;border-radius:14px;border:2px solid var(--border);background:var(--card);cursor:pointer;transition:all .2s;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--muted);min-width:80px;}
+.kids-lvl-btn:hover{border-color:#f472b6;color:#be185d;transform:translateY(-2px);}
+.kids-lvl-btn.active{background:linear-gradient(135deg,#fce7f3,#fdf4ff);border-color:#f472b6;color:#be185d;box-shadow:0 4px 12px rgba(244,114,182,.2);}
+.kids-lvl-sub{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:2px;letter-spacing:.5px;}
+.kids-lvl-btn.active .kids-lvl-sub{color:#be185d;}
+
+.kids-shelf{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.kids-book{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 14px;cursor:pointer;transition:all .25s;text-align:center;position:relative;overflow:hidden;}
+.kids-book:hover{border-color:#f472b6;transform:translateY(-3px);box-shadow:0 8px 20px rgba(244,114,182,.18);}
+.kids-book-cover{font-size:2.8rem;margin-bottom:8px;display:block;}
+.kids-book-title{font-family:'Playfair Display',serif;font-size:.88rem;color:var(--ink);margin-bottom:3px;line-height:1.3;}
+.kids-book-level{font-family:'DM Mono',monospace;font-size:.62rem;color:#be185d;background:#fce7f3;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:6px;}
+.kids-book-words{font-size:.72rem;color:var(--muted);}
+.kids-book-new{position:absolute;top:10px;right:10px;background:#f472b6;color:#fff;font-family:'DM Mono',monospace;font-size:.58rem;padding:2px 7px;border-radius:8px;}
+.kids-book-ai{position:absolute;top:10px;right:10px;background:var(--accent2);color:#fff;font-family:'DM Mono',monospace;font-size:.58rem;padding:2px 7px;border-radius:8px;}
+
+/* Story viewer */
+.kids-story-viewer{background:var(--card);border:2px solid #f9a8d4;border-radius:20px;overflow:hidden;margin-bottom:20px;}
+.kids-story-header{display:flex;align-items:center;gap:12px;padding:14px 20px;background:linear-gradient(135deg,#fce7f3,#fdf4ff);border-bottom:1px solid #f9a8d4;}
+.kids-back-btn{background:none;border:1.5px solid #f472b6;color:#be185d;padding:5px 13px;border-radius:20px;cursor:pointer;font-family:'Lora',serif;font-size:.8rem;transition:all .2s;}
+.kids-back-btn:hover{background:#f472b6;color:#fff;}
+.kids-story-title{font-family:'Playfair Display',serif;font-size:1.05rem;flex:1;color:var(--ink);}
+.kids-story-level-badge{font-family:'DM Mono',monospace;font-size:.68rem;padding:3px 10px;background:#be185d;color:#fff;border-radius:12px;}
+
+.kids-page{display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:340px;}
+.kids-page-illustration{background:linear-gradient(135deg,#fdf4ff 0%,#fce7f3 100%);display:flex;align-items:center;justify-content:center;padding:24px;font-size:8rem;border-right:1px solid #f9a8d4;}
+.kids-page-text{padding:28px 24px 20px;display:flex;flex-direction:column;justify-content:center;}
+.kids-page-text-content{font-family:'Lora',Georgia,serif;font-size:1.25rem;line-height:1.9;color:var(--ink);cursor:pointer;}
+.kids-page-text-content .kw{color:#be185d;font-weight:600;border-bottom:2px solid #f9a8d4;cursor:pointer;transition:background .15s;}
+.kids-page-text-content .kw:hover{background:#fce7f3;}
+.kids-page-zh{font-size:.82rem;color:var(--muted);font-style:italic;padding:0 24px 16px;border-top:1px solid #f0e6c8;line-height:1.7;display:none;}
+.kids-page-zh.show{display:block;}
+
+.kids-controls{display:flex;gap:8px;padding:12px 20px;border-top:1px solid #f9a8d4;flex-wrap:wrap;}
+.kids-ctrl-btn{padding:7px 18px;border-radius:20px;border:1.5px solid #f472b6;background:#fce7f3;color:#be185d;font-family:'Lora',serif;font-size:.82rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.kids-ctrl-btn:hover{background:#f472b6;color:#fff;}
+.kids-ctrl-btn.secondary{border-color:var(--accent2);background:rgba(74,124,111,.08);color:var(--accent2);}
+.kids-ctrl-btn.secondary:hover{background:var(--accent2);color:#fff;}
+
+.kids-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:linear-gradient(135deg,#fdf4ff,#fce7f3);}
+.kids-nav-btn{padding:8px 22px;border-radius:20px;border:1.5px solid #f9a8d4;background:var(--card);color:var(--muted);font-family:'Lora',serif;font-size:.84rem;cursor:pointer;transition:all .2s;}
+.kids-nav-btn:hover{border-color:#f472b6;color:#be185d;}
+.kids-nav-btn.primary{background:#f472b6;color:#fff;border-color:#f472b6;}
+.kids-nav-btn.primary:hover{background:#db2777;}
+.kids-page-indicator{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);}
+
+.kids-word-bar{padding:12px 20px;background:#fff;border-top:1px solid #f9a8d4;animation:fadeIn .2s ease;}
+.kids-word-en{font-family:'Playfair Display',serif;font-size:1.3rem;color:#be185d;}
+.kids-word-zh{font-size:.88rem;color:var(--accent);margin-top:2px;}
+.kids-word-phonetic{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);}
+
+.kids-loading{text-align:center;padding:60px 20px;color:var(--muted);}
+.kids-loading-spinner{width:36px;height:36px;border:3px solid #f9a8d4;border-top-color:#f472b6;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+#kids-loading-text{font-family:'DM Mono',monospace;font-size:.78rem;color:#be185d;}
+
+@media(max-width:680px){
+  .kids-shelf{grid-template-columns:repeat(2,1fr);}
+  .kids-page{grid-template-columns:1fr;}
+  .kids-page-illustration{border-right:none;border-bottom:1px solid #f9a8d4;min-height:160px;font-size:5rem;}
+}
+
+/* Vocab daily header */
+.vocab-daily-header{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:16px;}
+.vdh-title{font-family:'Playfair Display',serif;font-size:1.05rem;margin-bottom:3px;}
+.vdh-sub{font-size:.76rem;color:var(--muted);}
+.vdh-score{font-family:'DM Mono',monospace;font-size:1.8rem;color:var(--accent);font-weight:700;text-align:right;}
+.vdh-score-label{font-size:.68rem;color:var(--muted);text-align:right;font-family:'DM Mono',monospace;}
+.primary-btn{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important;font-size:.9rem!important;padding:9px 24px!important;}
+.primary-btn:hover{background:#a06830!important;}
+.vocab-card.mastered-today{border-left-color:var(--accent2);}
+.vocab-card.mastered-today::after{content:'✓';position:absolute;bottom:10px;right:12px;color:var(--accent2);font-size:.9rem;font-weight:700;}
+
+
+/* Refresh cache button */
+.refresh-btn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:transparent;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);cursor:pointer;transition:all .2s;letter-spacing:.3px;white-space:nowrap;}
+.refresh-btn:hover{border-color:var(--accent3);color:var(--accent3);}
+.refresh-btn.spinning{color:var(--accent);border-color:var(--accent);animation:spin-btn .8s linear infinite;}
+@keyframes spin-btn{to{transform:rotate(360deg)}}
+
+
+/* API test panel */
+.api-test-card{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:18px 20px;margin-top:16px;}
+.api-test-title{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.api-key-input{width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Mono',monospace;font-size:.76rem;background:var(--paper);color:var(--ink);margin-bottom:8px;outline:none;}
+.api-key-input:focus{border-color:var(--accent);}
+.api-test-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.api-test-btn{padding:6px 14px;border-radius:8px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-family:'DM Mono',monospace;font-size:.72rem;cursor:pointer;transition:all .2s;}
+.api-test-btn:hover{background:var(--accent);color:#fff;}
+.api-test-btn.save{background:var(--accent2);color:#fff;border-color:var(--accent2);}
+.api-test-btn.save:hover{background:#3a6b5e;}
+.api-test-result{font-family:'DM Mono',monospace;font-size:.72rem;padding:8px 12px;border-radius:8px;min-height:28px;line-height:1.6;word-break:break-all;}
+.api-test-result.ok{background:#e8f5e9;color:#2d6a4f;border:1px solid rgba(74,124,111,.3);}
+.api-test-result.fail{background:#fdf3e3;color:#7a3a2a;border:1px solid rgba(193,58,58,.3);}
+.api-test-result.info{background:var(--hl);color:var(--muted);border:1px solid var(--border);}
+
+</style>
+</head>
+<body>
+
+<div id="word-popup">
+  <div class="arr"></div>
+  <div class="pw" id="pop-w"></div>
+  <div class="pp" id="pop-p"></div>
+  <div class="pz" id="pop-z"></div>
+  <div class="pe" id="pop-e"></div>
+  <div class="pa">
+    <button class="pb" onmousedown="event.stopPropagation();speakPopWord()" id="pop-say-btn">Pronounce</button>
+    <button class="pb add" id="pop-add" onmousedown="event.stopPropagation();addToVocab()">Add to Vocab</button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<!-- Vocab Test Modal -->
+<div id="vtest-modal">
+  <div class="vtest-box">
+    <h3 id="vt-title">Test</h3>
+    <div class="vt-sub" id="vt-sub"></div>
+    <div id="spell-area">
+      <div class="vtest-word" id="vt-prompt-spell"></div>
+      <div class="vtest-hint" id="vt-hint-spell"></div>
+      <input class="vtest-input" id="vt-input" type="text" placeholder="Type the word..." autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')checkSpell()">
+      <div class="vtest-feedback" id="vt-fb-spell"></div>
+    </div>
+    <div id="pronun-area" style="display:none;">
+      <div class="vtest-word" id="vt-word-pronun"></div>
+      <div class="vtest-spell-hint" id="vt-meaning-pronun"></div>
+      <div class="pronun-area">
+        <button class="pronun-listen-btn" onclick="listenPronun()" id="pronun-listen-btn">▶ Hear the word</button>
+        <div style="margin-bottom:10px;font-size:.76rem;color:var(--muted);" id="pronun-instruction"></div>
+        <button class="pronun-record-btn" id="pronun-rec-btn" onclick="togglePronunRec()">
+          <span id="pronun-rec-icon">●</span><span id="pronun-rec-label">Record my pronunciation</span>
+        </button>
+        <div class="pronun-feedback" id="pronun-fb"></div>
+        <div class="sr-unavail" id="sr-unavail" style="display:none;"></div>
+      </div>
+    </div>
+    <div class="vtest-btns">
+      <button class="vt-btn primary" id="vt-check-btn" onclick="checkSpell()">Check</button>
+      <button class="vt-btn" onclick="nextVTest()">Skip</button>
+      <button class="vt-btn" onclick="closeVTest()">Close</button>
+    </div>
+    <div class="vtest-score" id="vt-score"></div>
+  </div>
+</div>
+
+<nav>
+  <div>
+    <div class="logo">English<span>Up</span></div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showSection('home')" data-i18n="nav_home">Home</button>
+      <button class="nav-tab" onclick="showSection('reading')" data-i18n="nav_reading">Reading</button>
+      <button class="nav-tab" onclick="showSection('speaking')" data-i18n="nav_speaking">Speaking</button>
+      <button class="nav-tab" onclick="showSection('vocab')" data-i18n="nav_vocab">Vocabulary</button>
+      <button class="nav-tab" onclick="showSection('listening')" data-i18n="nav_listening">Listening</button>
+    </div>
+    <button class="refresh-btn" id="refresh-btn" onclick="clearTodayCache()" title="清除今日缓存，重新生成内容">↺ 重新生成</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- HOME -->
+<section id="home" class="section active">
+  <div class="hero">
+    <h1 id="hero-h1">Hello, Learner<br>Let's <em>speak</em> English today</h1>
+    <p id="hero-p">30 minutes a day, real progress.</p>
+    <div class="hero-stats">
+      <div><div class="stat-num" id="days-count">0</div><div class="stat-label" id="stat-days">Days Streak</div></div>
+    </div>
+    <div><span class="level-badge">B1</span></div>
+    <div class="day-banner" id="day-banner"></div>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card"><div class="card-tag" data-i18n="home_reading_tag">Today · Reading</div><h3 id="home-read-title"></h3><p id="home-read-desc"></p><button class="card-btn primary" onclick="showSection('reading')" data-i18n="btn_start_reading">Start Reading</button></div>
+    <div class="card"><div class="card-tag" data-i18n="home_speaking_tag">Today · Speaking</div><h3 id="home-speak-title"></h3><p id="home-speak-desc"></p><button class="card-btn primary" onclick="showSection('speaking')" data-i18n="btn_start_speaking">Start Practice</button></div>
+    <div class="card"><div class="card-tag" data-i18n="home_listen_tag">Today · Listening</div><h3 id="home-listen-title"></h3><p id="home-listen-desc"></p><button class="card-btn" onclick="showSection('listening')" data-i18n="btn_go_listen">Go to Listening</button></div>
+    <div class="card" id="home-nce2-card"><div class="card-tag" style="color:#5a2a7a;">新概念英语2 · NCE2</div><h3 id="home-nce2-title" data-i18n="home_nce2_title">NCE Book 2</h3><p id="home-nce2-desc" data-i18n="home_nce2_desc">Today 3 lessons</p><button class="card-btn" onclick="showSection('listening')" data-i18n="btn_go_nce2">Go to Lessons</button></div>
+  </div>
+
+  <!-- API Key & Test Panel -->
+  <div class="api-test-card">
+    <div class="api-test-title">DeepSeek API 设置 &amp; 诊断</div>
+    <input class="api-key-input" id="api-key-input" type="text" placeholder="输入你的 DeepSeek API Key（sk-...）" autocomplete="off" spellcheck="false">
+    <div class="api-test-btns">
+      <button class="api-test-btn save" onclick="saveAPIKey()">保存 Key</button>
+      <button class="api-test-btn" onclick="testAPI()">测试连接</button>
+      <button class="api-test-btn" onclick="clearTodayCache()">↺ 重新生成今日内容</button>
+    </div>
+    <div class="api-test-result info" id="api-test-result">保存 Key 后点击"测试连接"，确认 API 可用后再点"重新生成"。</div>
+  </div>
+
+  <!-- Deploy instructions -->
+  <div class="api-test-card" style="margin-top:10px;border-color:rgba(74,124,111,.4);">
+    <div class="api-test-title" style="color:var(--accent2);">重要：如何正确打开此文件</div>
+    <div style="font-size:.8rem;line-height:1.9;color:var(--ink);">
+      <strong>不能直接双击打开 HTML 文件</strong>（file:// 协议会被浏览器 CORS 策略拦截所有 API 请求）。<br>
+      请用以下任一方式运行：<br><br>
+      <strong style="color:var(--accent2);">方式一：Python 本地服务器（推荐，30秒搞定）</strong><br>
+      <span style="font-family:'DM Mono',monospace;background:var(--hl);padding:2px 8px;border-radius:4px;font-size:.75rem;">① 打开终端，cd 到 HTML 文件所在目录</span><br>
+      <span style="font-family:'DM Mono',monospace;background:var(--hl);padding:2px 8px;border-radius:4px;font-size:.75rem;">② 运行：python3 -m http.server 8080</span><br>
+      <span style="font-family:'DM Mono',monospace;background:var(--hl);padding:2px 8px;border-radius:4px;font-size:.75rem;">③ 浏览器打开：http://localhost:8080/english-learning-platform.html</span><br><br>
+      <strong style="color:var(--accent2);">方式二：VS Code Live Server</strong><br>
+      安装 VS Code → 安装 Live Server 插件 → 右键 HTML 文件 → Open with Live Server<br><br>
+      <strong style="color:var(--accent2);">方式三：部署到 GitHub Pages（永久在线）</strong><br>
+      创建 GitHub 账号 → 新建仓库 → 上传 HTML 文件 → Settings → Pages → 选 main branch → 几分钟后得到永久链接
+    </div>
+  </div>
+</section>
+
+<!-- READING -->
+<section id="reading" class="section">
+  <div id="ai-banner-article" style="display:none;font-family:'DM Mono',monospace;font-size:.72rem;padding:5px 14px;border-radius:20px;display:none;margin-bottom:12px;"></div>
+  <div class="art-pills" id="art-pills"></div>
+  <div class="reading-article">
+    <div class="article-meta">
+      <span class="diff-badge diff-a2" id="art-diff">A2</span>
+      <span class="topic-badge" id="art-topic"></span>
+      <span style="font-size:.7rem;color:var(--muted);font-family:'DM Mono',monospace;" id="art-wc"></span>
+    </div>
+    <div class="article-title" id="art-title"></div>
+    <div class="article-subtitle" id="art-sub"></div>
+    <div class="article-body" id="art-body"></div>
+  </div>
+  <div class="reading-controls">
+    <button class="ctrl-btn" id="cn-btn" onclick="toggleTrans()"></button>
+    <button class="ctrl-btn" id="speak-art-btn" onclick="toggleSpeakArt()"></button>
+    <button class="ctrl-btn" id="hl-btn" onclick="toggleHL()"></button>
+    <button class="ctrl-btn" id="quiz-btn" onclick="showReadQ()"></button>
+  </div>
+  <div id="translation-box"></div>
+  <div class="questions-box" id="q-box">
+    <h4 id="q-box-title"></h4>
+    <div id="q-inner"></div>
+    <button class="ctrl-btn" id="check-ans-btn" style="margin-top:12px;" onclick="checkReadQ()"></button>
+  </div>
+  <button class="next-btn" id="next-art-btn" onclick="nextArt()"></button>
+</section>
+
+<!-- SPEAKING -->
+<section id="speaking" class="section">
+  <div id="ai-banner-scene" style="display:none;"></div>
+  <div class="speaking-hero">
+    <h2 data-i18n="speak_title">Speaking Practice</h2>
+  </div>
+  <div class="scenario-grid" id="scene-grid"></div>
+  <div class="practice-area">
+    <div class="prompt-box">
+      <div class="prompt-label" data-i18n="topic_label">TODAY'S TOPIC</div>
+      <div class="prompt-text" id="speak-prompt"></div>
+      <div class="prompt-zh" id="speak-zh"></div>
+    </div>
+    <div class="sentence-builder"><h4 data-i18n="frames_hint">Sentence Frames · Click to hear</h4><div id="frames"></div></div>
+    <div class="mic-area">
+      <div class="waveform"><div class="wave-bar"></div><div class="wave-bar" style="height:14px"></div><div class="wave-bar" style="height:22px"></div><div class="wave-bar" style="height:30px"></div><div class="wave-bar" style="height:22px"></div><div class="wave-bar" style="height:14px"></div><div class="wave-bar"></div></div>
+      <button class="mic-btn" id="mic-btn" onclick="toggleMic()">REC</button>
+      <div class="mic-label" id="mic-label"></div>
+      <div class="mic-timer" id="mic-timer">00:00</div>
+    </div>
+    <div class="feedback-box" id="feedback-box">
+      <h4 id="feedback-title"></h4>
+      <div class="feedback-item" id="feedback-1"></div>
+      <div class="feedback-item" id="feedback-2"></div>
+    </div>
+    <div class="shadow-area"><h4 data-i18n="shadow_hint">Shadow Reading · Click again to stop</h4>
+      <div class="shadow-btns">
+        <button class="shadow-btn" id="sh-slow" onclick="toggleShadow('slow')"></button>
+        <button class="shadow-btn" id="sh-norm" onclick="toggleShadow('normal')"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VOCAB -->
+<section id="vocab" class="section">
+  <div id="ai-banner-vocab"></div>
+  <div class="vocab-daily-header" id="vocab-daily-header">
+    <div class="vdh-left">
+      <div class="vdh-title" id="vdh-title">今日词汇</div>
+      <div class="vdh-sub" id="vdh-sub">每天15个B1词，完成拼写测试才算通过</div>
+    </div>
+    <div class="vdh-right">
+      <div class="vdh-score" id="vdh-score">0 / 15</div>
+      <div class="vdh-score-label" id="vdh-score-label">今日完成</div>
+    </div>
+  </div>
+  <div class="vocab-test-btns">
+    <button class="vtest-btn primary-btn" onclick="startVTest('spell')" id="vocab-spell-btn">开始拼写测试</button>
+  </div>
+  <div class="vocab-bank" id="vocab-grid"></div>
+</section>
+
+<!-- LISTENING -->
+<section id="listening" class="section">
+  <div id="ai-banner-listening" style="display:none;"></div>
+  <div class="listen-pills" id="listen-pills"></div>
+  <div id="listen-cards-container"></div>
+</section>
+
+
+
+</main>
+<script>
+// ============================================================
+// i18n
+// ============================================================
+const i18n = {
+  en: {
+    nav_home:'Home', nav_reading:'Reading', nav_speaking:'Speaking',
+    nav_vocab:'Vocabulary', nav_listening:'Listening', nav_phonics:'Phonics',
+    lang_btn:'中文',
+    hero_h1:"Hello, Learner<br>Let's <em>speak</em> English today",
+    hero_p:'30 minutes a day, real progress.',
+    stat_days:'Days Streak', stat_words:'Words Learned', stat_arts:'Articles Read',
+    day_banner:(d)=>`Day ${d} — Keep going!`,
+    home_reading_tag:'Today · Reading', home_speaking_tag:'Today · Speaking',
+    home_listen_tag:'Today · Listening', home_phonics_tag:'Today · Phonics',
+    home_phonics_title:'Short Vowels', home_phonics_desc:'Letters → Sounds',
+    btn_start_reading:'Start Reading', btn_start_speaking:'Start Practice',
+    btn_go_listen:'Go to Listening', btn_start_phonics:'Start Phonics',
+    dp_reading:'Reading', dp_vocab:'Vocabulary', dp_listen:'Listening',
+    show_trans:'Show Translation', hide_trans:'Hide Translation',
+    read_aloud:'Read Aloud', stop_reading:'Stop Reading',
+    hide_hl:'Hide Highlights', show_hl:'Show Highlights',
+    quiz:'Comprehension Quiz', check_ans:'Check Answers', next_art:'Next Article',
+    q_box_title:'Comprehension Quiz',
+    topic_label:'TODAY\'S TOPIC',
+    speak_title:'Speaking Practice',
+    frames_hint:'Sentence Frames · Click to hear',
+    mic_ready:'Click to record your voice', mic_recording:'Recording… say your sentence',
+    mic_done:'Done! Click to record again',
+    feedback_title:'Practice Feedback',
+    feedback_1:'Recording done! Repeat 3 times for stronger memory.',
+    feedback_2:'Try "I\'m from…" instead of just a city name — more natural.',
+    shadow_hint:'Shadow Reading · Click again to stop',
+    shadow_slow:'Slow Speed', shadow_normal:'Normal Speed',
+    shadow_stop_slow:'Stop Slow', shadow_stop_norm:'Stop Reading',
+    vt_spell:'Spelling Test', vt_pronun:'Pronunciation Test',
+    vt_spell_title:'Spelling Test',
+    vt_spell_sub:'Read the Chinese meaning and type the English word.',
+    vt_pronun_title:'Pronunciation Test',
+    vt_pronun_sub:'Listen to the word, then record yourself. The system will score your pronunciation.',
+    pronun_hear:'▶ Hear the word', pronun_instruction:'Now record yourself saying the word:',
+    pronun_rec_start:'Record my pronunciation', pronun_rec_stop:'Stop recording',
+    pronun_great:'Excellent pronunciation!',
+    pronun_good:'Good! A few sounds to work on.',
+    pronun_practice:'Keep practicing. Tap "Hear" to listen again.',
+    pronun_no_sr:'Speech recognition not available. Try Chrome on desktop.',
+    pronun_listening:'Listening…',
+    show_transcript:'Show Transcript', quiz_btn:'Quiz', listening_quiz:'Listening Quiz',
+    phonics_title:'Phonics — Learn to Sound Out English',
+    ptab_sv:'Short Vowels', ptab_lv:'Long Vowels', ptab_bl:'Consonant Blends',
+    ptab_di:'Digraphs', ptab_si:'Silent Letters',
+    sv_h:'The 5 Short Vowels', sv_sub:'Each vowel makes a short sound. Click to hear sound + examples.',
+    lv_h:'Long Vowels — "Say the letter name"',
+    lv_sub:'Long vowels sound like the name of the letter.',
+    magic_e:'The Magic E Rule',
+    magic_e_body:'When a word ends in silent "e", the vowel before it becomes long. cap→cape · bit→bite · hop→hope',
+    blend_h:'Consonant Blends', blend_sub:'Two or three consonants — each sound is still heard. Click to hear.',
+    dig_h:'Digraphs — Two letters, one new sound',
+    dig_sub:'Two letters that make one sound different from either letter alone.',
+    sil_h:'Silent Letters', sil_sub:'Written but not pronounced. Click to hear correct pronunciation.',
+    toast_added:(w)=>`"${w}" added to vocabulary!`,
+    toast_exists:(w)=>`"${w}" is already in your vocabulary`,
+    pronun_say_btn:'Pronounce', vocab_add:'Add to Vocab', vocab_added:'Added',
+    tag_new:'New', tag_review:'Review', tag_mastered:'Mastered', tag_added:'My Word',
+    nav_kids:'Kids',
+    kids_back:'Back to Books',
+    kids_listen:'Listen',
+    kids_speak:'Speak',
+    kids_zh_toggle:'中文',
+    kids_generating:'Generating storybook…',
+    kids_ready:'Storybook ready!',
+    kids_fail:'Generation failed — tap to retry',
+  },
+  zh: {
+    nav_home:'首页', nav_reading:'阅读', nav_speaking:'口语',
+    nav_vocab:'词汇', nav_listening:'听力', nav_phonics:'自然拼读',
+    lang_btn:'English',
+    hero_h1:"你好，学习者<br>今天继续 <em>开口说</em> 英语",
+    hero_p:'每天30分钟，真正进步。',
+    stat_days:'学习天数', stat_words:'已学单词', stat_arts:'读完文章',
+    day_banner:(d)=>`第 ${d} 天 — 继续加油！`,
+    home_reading_tag:'今日 · 阅读', home_speaking_tag:'今日 · 口语',
+    home_listen_tag:'今日 · 听力', home_phonics_tag:'今日 · 自然拼读',
+    home_phonics_title:'短元音', home_phonics_desc:'字母 → 发音',
+    btn_start_reading:'开始阅读', btn_start_speaking:'开始练习',
+    btn_go_listen:'去听力', btn_start_phonics:'学习拼读',
+    dp_reading:'阅读', dp_vocab:'词汇', dp_listen:'听力',
+    show_trans:'显示中文翻译', hide_trans:'隐藏中文翻译',
+    read_aloud:'朗读文章', stop_reading:'停止朗读',
+    hide_hl:'关闭高亮', show_hl:'开启高亮',
+    quiz:'理解测试', check_ans:'检查答案', next_art:'下一篇',
+    q_box_title:'理解测试',
+    topic_label:'今日主题',
+    speak_title:'口语练习',
+    frames_hint:'句型框架 · 点击朗读跟读',
+    mic_ready:'点击录音', mic_recording:'录音中… 说出你的句子',
+    mic_done:'录音完成，点击再次练习',
+    feedback_title:'练习反馈',
+    feedback_1:'录音完成！建议重复3遍强化记忆。',
+    feedback_2:'建议用 "I\'m from..." 替代只说城市名，更自然。',
+    shadow_hint:'影子跟读 · 再次点击可暂停',
+    shadow_slow:'慢速朗读', shadow_normal:'正常语速',
+    shadow_stop_slow:'停止慢速', shadow_stop_norm:'停止朗读',
+    vt_spell:'拼写测试', vt_pronun:'发音测试',
+    vt_spell_title:'拼写测试',
+    vt_spell_sub:'阅读中文释义，拼写出英文单词。',
+    vt_pronun_title:'发音测试',
+    vt_pronun_sub:'听单词发音，然后录下你说这个单词，系统评估发音准确度。',
+    pronun_hear:'▶ 听单词发音', pronun_instruction:'现在录下你说这个单词的声音：',
+    pronun_rec_start:'录制我的发音', pronun_rec_stop:'停止录音',
+    pronun_great:'发音非常准确！',
+    pronun_good:'不错！有几个音需要继续练习。',
+    pronun_practice:'继续练习，点击"听单词发音"再听一次。',
+    pronun_no_sr:'此浏览器不支持语音识别，请在桌面端使用Chrome。',
+    pronun_listening:'正在聆听…',
+    show_transcript:'显示文字稿', quiz_btn:'听力测试', listening_quiz:'听力理解测试',
+    phonics_title:'自然拼读 — 学会拼读英语',
+    ptab_sv:'短元音', ptab_lv:'长元音', ptab_bl:'辅音连缀',
+    ptab_di:'二合字母', ptab_si:'不发音字母',
+    sv_h:'5个短元音', sv_sub:'每个元音有一个短音。点击卡片听发音和例词。',
+    lv_h:'长元音 — "说字母本身的名字"',
+    lv_sub:'长元音听起来就像字母名称本身。',
+    magic_e:'魔法E规则',
+    magic_e_body:'单词末尾有不发音的"e"时，前面的元音变为长音。',
+    blend_h:'辅音连缀', blend_sub:'两个或三个辅音连在一起，每个音仍然发出。点击听例词。',
+    dig_h:'二合字母 — 两个字母，一个新发音',
+    dig_sub:'两个字母合在一起产生一个全新的发音。',
+    sil_h:'不发音字母', sil_sub:'写出来但不发音的字母。点击例词听正确发音。',
+    toast_added:(w)=>`"${w}" 已加入词汇本！`,
+    toast_exists:(w)=>`"${w}" 已在词汇本中`,
+    pronun_say_btn:'发音', vocab_add:'加入词汇', vocab_added:'已添加',
+    tag_new:'新词', tag_review:'复习', tag_mastered:'掌握', tag_added:'自添',
+    nav_kids:'幼儿',
+    kids_back:'返回书架',
+    kids_listen:'朗读',
+    kids_speak:'跟读',
+    kids_zh_toggle:'中文',
+    kids_generating:'正在生成绘本…',
+    kids_ready:'绘本已生成！',
+    kids_fail:'生成失败，点击重试',
+  }
+};
+
+let lang='en';
+function t(key,...args){const v=i18n[lang][key];return typeof v==='function'?v(...args):(v||i18n.en[key]||key);}
+
+// lang toggle removed
+
+function applyLang(){
+  // lang btn removed
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    const v=i18n[lang][k];
+    if(v&&typeof v!=='function')el.textContent=v;
+  });
+  document.getElementById('hero-h1').innerHTML=t('hero_h1');
+  document.getElementById('hero-p').textContent=t('hero_p');
+  document.getElementById('stat-days').textContent=t('stat_days');
+  updateDayBanner();
+  document.getElementById('cn-btn').textContent=transShowing?t('hide_trans'):t('show_trans');
+  document.getElementById('speak-art-btn').textContent=artSpeaking?t('stop_reading'):t('read_aloud');
+  document.getElementById('hl-btn').textContent=hlOn?t('hide_hl'):t('show_hl');
+  document.getElementById('quiz-btn').textContent=t('quiz');
+  document.getElementById('check-ans-btn').textContent=t('check_ans');
+  document.getElementById('next-art-btn').textContent=t('next_art');
+  document.getElementById('q-box-title').textContent=t('q_box_title');
+  document.getElementById('mic-label').textContent=micOn?t('mic_recording'):t('mic_ready');
+  document.getElementById('sh-slow').textContent=shadowState.slow?t('shadow_stop_slow'):t('shadow_slow');
+  document.getElementById('sh-norm').textContent=shadowState.normal?t('shadow_stop_norm'):t('shadow_normal');
+  document.getElementById('pop-say-btn').textContent=t('pronun_say_btn');
+  document.getElementById('feedback-title').textContent=t('feedback_title');
+  document.getElementById('feedback-1').textContent=t('feedback_1');
+  document.getElementById('feedback-2').textContent=t('feedback_2');
+  buildArtPills();
+  buildListenPills();
+  buildScenarioGrid();
+  renderVocab();
+  updateHomeCards();
+}
+
+// ============================================================
+// Persistent Storage (window.storage API — artifact DB)
+// ============================================================
+const STORE_KEY='englishup_data';
+
+async function saveData(){
+  const data={
+    lang, vocabWords, progress,
+    visitDates, firstVisit,
+    stats:{arts:progress.arts_read||0}
+  };
+  try{await window.storage.set(STORE_KEY,JSON.stringify(data));}
+  catch(e){try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e2){}}
+}
+
+async function loadData(){
+  try{
+    const r=await window.storage.get(STORE_KEY);
+    if(r&&r.value)return JSON.parse(r.value);
+  }catch(e){}
+  try{
+    const r=localStorage.getItem(STORE_KEY);
+    if(r)return JSON.parse(r);
+  }catch(e){}
+  return null;
+}
+
+// ============================================================
+// Daily rotation system — no locking, just rotate by date
+// ============================================================
+let firstVisit='';
+let visitDates=[];
+let currentDay=1;
+
+function getToday(){return new Date().toISOString().slice(0,10);}
+
+// Get day index for rotating content (0-based, resets every N items)
+function getDayIndex(poolSize){
+  const base=new Date('2025-01-01');
+  const now=new Date();
+  const diff=Math.floor((now-base)/(1000*60*60*24));
+  return diff%poolSize;
+}
+
+function initDailySystem(){
+  const today=getToday();
+  if(!firstVisit)firstVisit=today;
+  if(!visitDates.includes(today))visitDates.push(today);
+  currentDay=visitDates.length;
+  updateDayBanner();
+}
+
+function updateDayBanner(){
+  const el=document.getElementById('day-banner');
+  if(el)el.textContent=t('day_banner',currentDay);
+}
+
+// ============================================================
+// Content pools — all articles, speaking scenarios, listening clips
+// ============================================================
+const articles=[
+  {diff:'A2',topicEN:'Daily Life',topicZH:'日常生活',wc:'~180 words',
+   titleEN:'A Day in My Life',titleZH:'我的一天',
+   subEN:'Habits, mornings, simple joys',subZH:'习惯与早晨',
+   text:`Every morning, I wake up at seven o'clock. I brush my teeth and wash my face. Then I make a cup of coffee. I love the smell of coffee in the morning.\n\nAfter breakfast, I usually take the subway to work. The journey takes about thirty minutes. I listen to English podcasts on the way.\n\nAt work, I sit at my desk and answer emails first. I have meetings in the afternoon. My colleagues are very friendly. We often have lunch together.\n\nIn the evening, I go home and relax. Sometimes I cook dinner. Sometimes I order food. I watch a TV show before bed. Life is simple, but I am grateful.`,
+   kw:{wake:{zh:'起床',p:'/weɪk/',ex:'I wake up at 7 every morning.'},brush:{zh:'刷牙',p:'/brʌʃ/',ex:"Don't forget to brush your teeth."},coffee:{zh:'咖啡',p:"/ˈkɒfi/",ex:'I love coffee in the morning.'},breakfast:{zh:'早饭',p:"/ˈbrekfəst/",ex:'Breakfast is the most important meal.'},subway:{zh:'地铁',p:"/ˈsʌbweɪ/",ex:'I take the subway to work.'},journey:{zh:'旅程',p:"/ˈdʒɜːrni/",ex:'The journey takes 30 minutes.'},podcasts:{zh:'播客',p:"/ˈpɒdkɑːsts/",ex:'I listen to podcasts every day.'},emails:{zh:'电子邮件',p:"/ˈiːmeɪlz/",ex:'I check my emails first.'},meetings:{zh:'会议',p:"/ˈmiːtɪŋz/",ex:'I have two meetings today.'},colleagues:{zh:'同事',p:"/ˈkɒliːɡz/",ex:'My colleagues are friendly.'},relax:{zh:'放松',p:'/rɪˈlæks/',ex:'I relax after work.'},grateful:{zh:'感激的',p:"/ˈɡreɪtfʊl/",ex:"I'm grateful for everything."}},
+   transZH:'每天早晨，我七点起床，刷牙洗脸，然后泡一杯咖啡。\n\n早饭后，通常坐地铁上班，大约三十分钟。我在路上听英语播客。\n\n工作时先回复邮件，下午开会。同事都很友善，经常一起吃午饭。\n\n晚上回家放松，有时做饭有时点外卖。睡前看一集电视剧。生活简单，但我很感恩。',
+   qs:[{q:"What does the writer drink in the morning?",opts:["Tea","Coffee","Juice","Water"],ans:1},{q:"How does the writer go to work?",opts:["By car","By bus","By subway","By bike"],ans:2},{q:"What does 'colleagues' mean?",opts:["Friends","Family","Co-workers","Neighbors"],ans:2}]},
+  {diff:'A2',topicEN:'Travel',topicZH:'旅行',wc:'~160 words',
+   titleEN:'My First Trip Abroad',titleZH:'第一次出国',
+   subEN:'Nerves, excitement, and new discoveries',subZH:'紧张与兴奋',
+   text:`Last year, I traveled to Thailand for the first time. I was very excited and a little nervous.\n\nThe flight was three hours long. When I arrived in Bangkok, the weather was very hot. I visited temples, ate street food, and met friendly local people. The food was delicious.\n\nI learned a few Thai words like "Sawadee" which means hello. People were very patient when I couldn't speak their language. Travel teaches you to be confident and open-minded.`,
+   kw:{excited:{zh:'兴奋的',p:'/ɪkˈsaɪtɪd/',ex:"I'm so excited!"},nervous:{zh:'紧张的',p:"/ˈnɜːrvəs/",ex:'She felt nervous before the test.'},flight:{zh:'航班',p:'/flaɪt/',ex:'My flight departs at 10 AM.'},temples:{zh:'寺庙',p:"/ˈtemplz/",ex:'We visited ancient temples.'},delicious:{zh:'美味的',p:'/dɪˈlɪʃəs/',ex:'The food was delicious.'},patient:{zh:'有耐心的',p:"/ˈpeɪʃənt/",ex:'Be patient when learning.'},confident:{zh:'自信的',p:"/ˈkɒnfɪdənt/",ex:'Be confident when you speak.'}},
+   transZH:'去年我第一次去泰国旅行，又兴奋又有点紧张。\n\n飞了三个小时。到曼谷天气很热，参观了寺庙，吃了街边小吃，认识了友善的当地人，食物非常美味。\n\n学了几句泰语，如"Sawadee"是你好的意思。不会泰语时人们都很有耐心。旅行让你更自信开放。',
+   qs:[{q:"Where did the writer travel?",opts:["Japan","Thailand","Vietnam","Korea"],ans:1},{q:"How long was the flight?",opts:["1 hour","2 hours","3 hours","5 hours"],ans:2},{q:"What does 'patient' mean?",opts:["Angry","Nervous","Calm and willing to wait","Confident"],ans:2}]},
+  {diff:'A2',topicEN:'Food',topicZH:'食物',wc:'~150 words',
+   titleEN:'Learning to Cook Pasta',titleZH:'学做意大利面',
+   subEN:'An adventure in the kitchen',subZH:'厨房里的小冒险',
+   text:`Last weekend, I decided to cook pasta for the first time. I watched a video online and bought the ingredients.\n\nI boiled water and added salt. I cooked the pasta for ten minutes. Then I made a sauce with tomatoes, garlic, and olive oil.\n\nThe result was not perfect, but it tasted good! I felt very proud of myself. Cooking is like learning English — you need practice and patience!`,
+   kw:{ingredients:{zh:'食材',p:'/ɪnˈɡriːdiənts/',ex:'Mix all the ingredients.'},boiled:{zh:'煮沸',p:'/bɔɪld/',ex:'I boiled water for tea.'},sauce:{zh:'酱汁',p:'/sɔːs/',ex:'The tomato sauce is delicious.'},garlic:{zh:'大蒜',p:"/ˈɡɑːrlɪk/",ex:'Add garlic for flavor.'},perfect:{zh:'完美的',p:"/ˈpɜːrfɪkt/",ex:'Practice makes perfect.'},proud:{zh:'自豪的',p:'/praʊd/',ex:"I'm proud of my work."},practice:{zh:'练习',p:"/ˈpræktɪs/",ex:'Practice every day.'},patience:{zh:'耐心',p:"/ˈpeɪʃəns/",ex:'Have patience!'}},
+   transZH:'上周末我决定第一次自己做意大利面。看了网上视频，买好食材。\n\n把水烧开加盐，煮意面十分钟，然后用番茄、大蒜和橄榄油做酱汁。\n\n结果虽不完美，但很好吃！我为自己感到自豪。做饭就像学英语——需要练习和耐心！',
+   qs:[{q:"How did the writer learn to cook pasta?",opts:["From a book","From a friend","From a video online","From school"],ans:2},{q:"How long did the writer cook the pasta?",opts:["5 mins","8 mins","10 mins","15 mins"],ans:2},{q:"What does 'proud' mean?",opts:["Sad","Angry","Satisfied with achievement","Confused"],ans:2}]},
+  {diff:'A2',topicEN:'Weather',topicZH:'天气',wc:'~150 words',
+   titleEN:'Four Seasons',titleZH:'四季',
+   subEN:'Spring, summer, autumn, winter',subZH:'春夏秋冬',
+   text:`I love all four seasons, but for different reasons.\n\nSpring is warm and fresh. The flowers bloom and everything looks green. Summer is hot and sunny. People go to the beach and enjoy ice cream. Autumn is my favorite season. The leaves turn red and yellow. The air is cool and crisp.\n\nWinter is cold and sometimes snowy. I stay inside with a hot drink and a good book. Each season has its own beauty. Life changes just like the weather — and that is wonderful.`,
+   kw:{seasons:{zh:'季节',p:"/ˈsiːzənz/",ex:'There are four seasons.'},bloom:{zh:'开花',p:'/bluːm/',ex:'Flowers bloom in spring.'},autumn:{zh:'秋天',p:"/ˈɔːtəm/",ex:'Autumn is my favorite season.'},leaves:{zh:'叶子',p:'/liːvz/',ex:'The leaves turn yellow.'},crisp:{zh:'清新的',p:'/krɪsp/',ex:'The air is crisp and cold.'},snowy:{zh:'下雪的',p:"/ˈsnoʊi/",ex:'It was a snowy morning.'}},
+   transZH:'我喜欢四季，但喜欢的理由各不同。\n\n春天温暖清新，花儿盛开，一片绿意。夏天炎热阳光，人们去海滩吃冰淇淋。秋天是我最爱的季节，树叶变红变黄，空气凉爽清新。\n\n冬天寒冷有时下雪，我待在室内捧着热饮看好书。每个季节都有自己的美。生活就像天气一样变化——这很美妙。',
+   qs:[{q:"What is the writer's favorite season?",opts:["Spring","Summer","Autumn","Winter"],ans:2},{q:"What do leaves do in autumn?",opts:["Bloom","Turn red and yellow","Fall in summer","Stay green"],ans:1},{q:"What does 'crisp' mean?",opts:["Warm","Wet","Cool and fresh","Hot"],ans:2}]},
+  {diff:'B1',topicEN:'Work',topicZH:'工作',wc:'~200 words',
+   titleEN:'Working from Home',titleZH:'居家办公',
+   subEN:'Remote work — freedom and challenges',subZH:'自由与挑战并存',
+   text:`Since the pandemic, many people have started working from home. This new way of working has both advantages and challenges.\n\nOn the positive side, you save commuting time. You can wear comfortable clothes. You have more flexibility to manage your schedule. Many people feel more productive in a quiet home environment.\n\nHowever, there are also drawbacks. It can be lonely without colleagues. The line between work and personal life can blur. Many people struggle to stay focused without the office structure.`,
+   kw:{pandemic:{zh:'大流行病',p:'/pænˈdemɪk/',ex:'The pandemic changed everything.'},advantages:{zh:'优点',p:'/ədˈvɑːntɪdʒɪz/',ex:'There are many advantages.'},commuting:{zh:'通勤',p:'/kəˈmjuːtɪŋ/',ex:'I spend two hours commuting.'},flexibility:{zh:'灵活性',p:'/ˌfleksɪˈbɪlɪti/',ex:'This job offers flexibility.'},productive:{zh:'高效的',p:'/prəˈdʌktɪv/',ex:"I'm more productive at home."},drawbacks:{zh:'缺点',p:"/ˈdrɔːbæks/",ex:'Every plan has drawbacks.'},lonely:{zh:'孤独的',p:"/ˈloʊnli/",ex:'Working alone can be lonely.'},struggle:{zh:'挣扎',p:"/ˈstrʌɡəl/",ex:'I struggle to focus.'}},
+   transZH:'自疫情以来，很多人开始居家办公。这种方式有优点也有挑战。\n\n优点：省去通勤时间，可穿舒适衣服，时间更灵活，很多人在家中效率更高。\n\n缺点：没有同事容易孤独；工作与生活界限模糊；没有办公室节奏，难以保持专注。',
+   qs:[{q:"What is one advantage of working from home?",opts:["Better salary","Saving commuting time","More colleagues","Bigger desk"],ans:1},{q:"What does 'drawbacks' mean?",opts:["Benefits","Disadvantages","Rules","Surprises"],ans:1},{q:"What problem might home workers face?",opts:["Too much work","Loneliness and lack of focus","Bad internet","Long commutes"],ans:1}]},
+  {diff:'B1',topicEN:'Health',topicZH:'健康',wc:'~180 words',
+   titleEN:'Building Healthy Habits',titleZH:'养成健康习惯',
+   subEN:'Small changes, big results',subZH:'小改变，大效果',
+   text:`Many people want to be healthier, but they don't know where to start. The secret is to begin with small, consistent changes.\n\nFor example, drinking more water every day can improve your energy and focus. Going for a short walk after dinner helps digestion and reduces stress. Sleeping at least seven hours a night makes your brain work better.\n\nThe key is not to change everything at once. Choose one habit, practice it for three weeks, then add another. Small steps build big results over time. Your body and mind will thank you.`,
+   kw:{consistent:{zh:'持续的',p:'/kənˈsɪstənt/',ex:'Be consistent in your practice.'},improve:{zh:'改善',p:'/ɪmˈpruːv/',ex:'Exercise improves your health.'},digestion:{zh:'消化',p:'/daɪˈdʒestʃən/',ex:'Walking helps digestion.'},reduces:{zh:'减少',p:'/rɪˈdjuːsɪz/',ex:'Exercise reduces stress.'},habit:{zh:'习惯',p:"/ˈhæbɪt/",ex:'Build a daily habit.'},energy:{zh:'精力',p:"/ˈenərdʒi/",ex:'I have more energy today.'}},
+   transZH:'很多人想变得更健康，却不知从何开始。秘诀是从小而持续的改变开始。\n\n比如每天多喝水能提升精力和专注力；晚饭后散步有助消化并减轻压力；每晚至少睡七小时让大脑运转更好。\n\n关键是不要一次改变所有事情。选一个习惯，坚持三周，再加另一个。小步骤随时间累积成大结果。你的身体和大脑会感谢你。',
+   qs:[{q:"What is the secret to becoming healthier?",opts:["Changing everything at once","Starting with small consistent changes","Joining a gym","Following a strict diet"],ans:1},{q:"How long should you practice one habit before adding another?",opts:["One week","Two weeks","Three weeks","One month"],ans:2},{q:"What does 'reduces' mean?",opts:["Increases","Decreases","Changes","Improves"],ans:1}]},
+];
+
+const scenarios=[
+  {promptEN:"Introduce yourself — name, where you're from, and one hobby.",promptZH:"自我介绍：姓名、来自哪里、一个爱好。",
+   frames:[{en:"My name is <span class='blank'>___name___</span>. I'm from <span class='blank'>___city___</span>.",zh:"我叫___，来自___。"},{en:"I'm <span class='blank'>___age___</span> years old and I work as a <span class='blank'>___job___</span>.",zh:"我___岁，是___。"},{en:"In my free time, I enjoy <span class='blank'>___hobby___</span>.",zh:"业余时间我喜欢___。"}]},
+  {promptEN:"You're at a café. Order a drink and ask the price.",promptZH:"你在咖啡店，点一杯饮品并询问价格。",
+   frames:[{en:"Can I have a <span class='blank'>___drink___</span>, please?",zh:"我能要一杯___吗？"},{en:"I'd like a <span class='blank'>___size___</span> <span class='blank'>___drink___</span>.",zh:"我想要___大小的___。"},{en:"How much is that, please?",zh:"这多少钱？"}]},
+  {promptEN:"You're lost. Ask someone for directions.",promptZH:"你迷路了，向路人问路。",
+   frames:[{en:"Excuse me, I'm looking for <span class='blank'>___place___</span>.",zh:"打扰一下，我在找___。"},{en:"How do I get to the nearest <span class='blank'>___place___</span>?",zh:"最近的___怎么走？"},{en:"Is it far? How long does it take to walk?",zh:"远吗？走路要多久？"}]},
+  {promptEN:"Call a clinic to make an appointment.",promptZH:"打电话去诊所预约挂号。",
+   frames:[{en:"Hello, I'd like to make an appointment.",zh:"你好，我想预约挂号。"},{en:"I have a <span class='blank'>___problem___</span>. Any slot this week?",zh:"我有___，这周有号吗？"},{en:"What time is available — morning or afternoon?",zh:"什么时间有号？"}]},
+  {promptEN:"You meet someone new at a party. Start a conversation.",promptZH:"在聚会上认识新朋友，开始对话。",
+   frames:[{en:"Hi! I don't think we've met. I'm <span class='blank'>___name___</span>.",zh:"嗨！我们还没见过，我是___。"},{en:"What do you do? Are you a student?",zh:"你是做什么的？"},{en:"That sounds interesting! How long have you been doing that?",zh:"听起来很有意思！你做多久了？"}]},
+  {promptEN:"At the airport — check in for your flight.",promptZH:"在机场办理登机手续。",
+   frames:[{en:"I'm checking in for the flight to <span class='blank'>___city___</span>.",zh:"我要办理前往___的航班手续。"},{en:"Here is my passport and booking confirmation.",zh:"这是我的护照和订票确认。"},{en:"I have <span class='blank'>___number___</span> bags to check. Any window seats?",zh:"我有___件行李，有靠窗座位吗？"}]},
+  {promptEN:"You want to compliment a friend's cooking.",promptZH:"你想称赞朋友做的菜。",
+   frames:[{en:"This is absolutely <span class='blank'>___adjective___</span>! Did you make this yourself?",zh:"这真的太___了！你自己做的吗？"},{en:"I love the <span class='blank'>___flavor/ingredient___</span> in this dish.",zh:"我喜欢这道菜里的___。"},{en:"You should open a restaurant! This is restaurant quality.",zh:"你应该开餐厅！这是餐厅级别的。"}]},
+  {promptEN:"Describe your hometown to someone who has never been there.",promptZH:"向从未去过的人描述你的家乡。",
+   frames:[{en:"My hometown is <span class='blank'>___city___</span>. It's <span class='blank'>___adjective___</span>.",zh:"我的家乡是___，它___。"},{en:"The most famous thing about it is <span class='blank'>___thing___</span>.",zh:"它最有名的是___。"},{en:"If you visit, you must try <span class='blank'>___food/activity___</span>.",zh:"如果你去，一定要___。"}]}
+];
+
+const listeningClips=[
+  {titleEN:'Daily Routines',titleZH:'日常作息',level:'B1',defaultSpeed:1.0,
+   transcript:'Every day, I wake up at seven o\'clock. First, I brush my teeth and wash my face. Then I make breakfast. I usually eat eggs and toast. After breakfast, I take the subway to work. The ride takes about thirty minutes. At work, I check my emails and attend meetings. In the evening, I go home, cook dinner, and relax. I usually go to bed at eleven o\'clock.',
+   qs:[{q:"What time does the speaker wake up?",opts:["Six o'clock","Seven o'clock","Eight o'clock"],ans:1},{q:"How does the speaker go to work?",opts:["By car","By bus","By subway"],ans:2}]},
+  {titleEN:'A Trip to the Market',titleZH:'逛早市',level:'B1',defaultSpeed:1.0,
+   transcript:'On Saturday morning, I went to the local market. There were many vegetables, fruits, and fresh fish. I bought some tomatoes, apples, and bread. The tomatoes were very fresh and cheap. I also talked to the friendly market seller. He recommended a new type of cheese. I bought a small piece. When I got home, I cooked a simple lunch. It was a wonderful morning.',
+   qs:[{q:"When did the speaker go to the market?",opts:["Friday evening","Saturday morning","Sunday afternoon"],ans:1},{q:"What did the seller recommend?",opts:["Fresh fish","Apples","A new type of cheese"],ans:2}]},
+  {titleEN:'Healthy Habits',titleZH:'健康习惯',level:'B1',defaultSpeed:1.0,
+   transcript:'Building healthy habits is not difficult if you start small. First, drink eight glasses of water every day. This helps your body and brain work well. Second, take a short walk after each meal. Even ten minutes makes a difference. Third, go to bed at the same time every night. Good sleep gives you energy for the next day. Remember: small habits, big results.',
+   qs:[{q:"How many glasses of water should you drink daily?",opts:["Four","Six","Eight"],ans:2},{q:"When should you take a short walk?",opts:["In the morning","After each meal","Before bed"],ans:1}]},
+  {titleEN:'A Phone Call',titleZH:'一通电话',level:'B1',defaultSpeed:1.0,
+   transcript:'Sarah: Hello, is this the City Clinic? Receptionist: Yes, how can I help you? Sarah: I\'d like to make an appointment with Dr. Chen, please. Receptionist: Of course. What is the problem? Sarah: I have a sore throat and a slight fever. Receptionist: I see. Dr. Chen has an opening tomorrow at two o\'clock. Does that work for you? Sarah: Yes, that\'s perfect. Thank you very much. Receptionist: You\'re welcome. See you tomorrow.',
+   qs:[{q:"What is Sarah's problem?",opts:["A stomachache","A sore throat and slight fever","A headache"],ans:1},{q:"What time is the appointment?",opts:["Two o'clock tomorrow","Three o'clock today","Morning tomorrow"],ans:0}]},
+  {titleEN:'Learning a New Language',titleZH:'学习新语言',level:'B1',defaultSpeed:1.0,
+   transcript:'Many people want to learn a new language, but they don\'t know where to start. Experts say the most important thing is to use the language every day, even for just ten or fifteen minutes. Reading simple texts, watching videos with subtitles, and speaking with native speakers are very effective. Don\'t be afraid to make mistakes. The key is to stay consistent and enjoy the process. Every expert was once a beginner.',
+   qs:[{q:"How long should you practice every day?",opts:["One hour","Ten to fifteen minutes","Thirty minutes"],ans:1},{q:"What is the key to success?",opts:["Having a good teacher","Being consistent and enjoying the process","Never making mistakes"],ans:1}]},
+  {titleEN:'City vs. Countryside',titleZH:'城市与乡村',level:'B1',defaultSpeed:1.0,
+   transcript:'Some people love living in the city because everything is convenient. Shops, hospitals, and transport are all nearby. But city life can be noisy and stressful. Other people prefer the countryside where the air is clean and life is slower. They enjoy nature and quiet evenings. Both have advantages and disadvantages. Where you live depends on what you value most in life.',
+   qs:[{q:"What is one advantage of city life?",opts:["Clean air","Everything is convenient","Quiet evenings"],ans:1},{q:"What do countryside people enjoy?",opts:["Traffic and crowds","Nature and quiet","Shops and hospitals"],ans:1}]}
+];
+
+// ============================================================
+// State
+// ============================================================
+let vocabWords=[]; // populated by initDailyVocab()
+let progress={arts_read:0,listen_done:0};
+
+let curArt=0, hlOn=true, artSpeaking=false, transShowing=false, readAns={};
+let shadowState={slow:false,normal:false};
+let curScene=0, micOn=false, micTimer=null, micSecs=0;
+let audioSpeeds=[0.8,0.8,1.0,0.8,1.0,0.8];
+let audioPlaying=[];
+let audioTimers=[];
+let audioSecs=[];
+let audioDurCache=[];
+let popW='';
+let vtMode='', vtIdx=0, vtCorrect=0, vtTotal=0, vtWords=[];
+let pronunRecognizer=null, pronunRecActive=false;
+
+// Daily indices
+let todayArtIdx=0, todaySceneIdx=0, todayListenIdx=0;
+
+// ============================================================
+// NAV
+// ============================================================
+function updateHomeStats(){
+  countUp('days-count',currentDay);
+}
+function updateDayProgress(){
+  // Progress bars removed
+}
+function countUp(id,target){
+  const el=document.getElementById(id);if(!el)return;
+  let c=0;const tm=setInterval(()=>{el.textContent=++c;if(c>=target)clearInterval(tm);},80);
+}
+function measureDurations(){
+  listeningClips.forEach((clip,idx)=>{
+    const wc=(clip.transcript||'').split(/\s+/).length;
+    audioDurCache[idx]=Math.round((wc/(150*(audioSpeeds[idx]||0.85)))*60);
+    const lbl=document.getElementById('dur-label-'+idx);
+    if(lbl)lbl.textContent=fmt(audioDurCache[idx]);
+    const tEl=document.getElementById('time-'+idx);
+    if(tEl)tEl.textContent='0:00 / '+fmt(audioDurCache[idx]);
+  });
+}
+function updateHomeCards(){
+  const a=articles[todayArtIdx]||articles[0];
+  const s=scenarios[todaySceneIdx]||scenarios[0];
+  const l=listeningClips[todayListenIdx]||listeningClips[0];
+  const nce2=listeningClips.find(c=>c.isNCE2);
+  const el=id=>document.getElementById(id);
+  if(!a||!el('home-read-title'))return;
+  el('home-read-title').textContent=lang==='zh'?a.titleZH:a.titleEN;
+  el('home-read-desc').textContent=(lang==='zh'?a.topicZH:a.topicEN)+' · '+a.diff+' · '+(a.wc||'');
+  if(s){
+    const sNameEN=(s.promptEN||'').replace(/[.!?].*$/,'').slice(0,28);
+    const sNameZH=(s.promptZH||'').replace(/[。！？].*$/,'').slice(0,12);
+    el('home-speak-title').textContent=lang==='zh'?sNameZH:sNameEN;
+    el('home-speak-desc').textContent=lang==='zh'?s.promptZH:s.promptEN;
+  }
+  if(l){
+    el('home-listen-title').textContent=lang==='zh'?l.titleZH:l.titleEN;
+    el('home-listen-desc').textContent=(l.level||'')+(lang==='zh'?' · 点击播放收听':' · Click to play');
+  }
+  const nceTitle=document.getElementById('home-nce2-title');
+  const nceDesc=document.getElementById('home-nce2-desc');
+  if(nceTitle&&nce2)nceTitle.textContent=lang==='zh'?nce2.titleZH:nce2.titleEN;
+  if(nceDesc&&nce2)nceDesc.textContent='NCE2 · '+(lang==='zh'?'今日3课':'Today 3 lessons');
+}
+
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const map={home:0,reading:1,speaking:2,vocab:3,listening:4};
+  const i=map[id];if(i!==undefined)document.querySelectorAll('.nav-tab')[i].classList.add('active');
+}
+
+// ============================================================
+// READING
+// ============================================================
+function buildArtPills(){
+  const c=document.getElementById('art-pills');if(!c)return;
+  c.innerHTML=articles.map((a,i)=>{
+    const label=lang==='zh'?a.topicZH:a.topicEN;
+    const isAI=!!a.isAI;
+    const badge=isAI
+      ?'<span class="today-badge" style="background:var(--accent2);font-size:.58rem;">'+(lang==='zh'?'AI':'AI')+'</span>'
+      :'';
+    return '<button class="art-pill'+(i===curArt?' active':'')+'" onclick="loadArticle('+i+',this)">'+label+badge+'</button>';
+  }).join('');
+}
+
+function loadArticle(idx,btn){
+  curArt=idx;
+  document.querySelectorAll('.art-pill').forEach(p=>p.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  else{const pills=document.querySelectorAll('.art-pill');if(pills[idx])pills[idx].classList.add('active');}
+  const a=articles[idx];
+  document.getElementById('art-diff').className='diff-badge diff-'+a.diff.toLowerCase();
+  document.getElementById('art-diff').textContent=a.diff;
+  document.getElementById('art-topic').textContent=lang==='zh'?a.topicZH:a.topicEN;
+  document.getElementById('art-wc').textContent=a.wc;
+  document.getElementById('art-title').textContent=lang==='zh'?a.titleZH:a.titleEN;
+  document.getElementById('art-sub').textContent=lang==='zh'?a.subZH:a.subEN;
+  document.getElementById('art-body').innerHTML=buildArticleHTML(a);
+  document.getElementById('q-box').style.display='none';
+  transShowing=false;
+  document.getElementById('translation-box').style.display='none';
+  document.getElementById('cn-btn').textContent=t('show_trans');
+  document.getElementById('cn-btn').classList.remove('on');
+  document.getElementById('speak-art-btn').textContent=t('read_aloud');
+  document.getElementById('speak-art-btn').classList.remove('on');
+  document.getElementById('hl-btn').textContent=t('hide_hl');
+  document.getElementById('quiz-btn').textContent=t('quiz');
+  document.getElementById('check-ans-btn').textContent=t('check_ans');
+  document.getElementById('next-art-btn').textContent=t('next_art');
+  document.getElementById('q-box-title').textContent=t('q_box_title');
+  readAns={};closePopup();stopArtSpeech();
+  progress.arts_read=Math.max(progress.arts_read||0,1);
+  updateDayProgress();saveData();
+}
+
+function buildArticleHTML(a){
+  const paras=a.text.split('\n\n');
+  return paras.map(para=>{
+    const tokens=para.split(/(\s+)/);
+    return '<p>'+tokens.map(tok=>{
+      if(/^\s+$/.test(tok))return tok;
+      const bare=tok.replace(/[^a-zA-Z']/g,'').toLowerCase();
+      const kwKey=Object.keys(a.kw).find(k=>k.toLowerCase()===bare);
+      const esc=s=>String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      if(kwKey&&hlOn){
+        const d=a.kw[kwKey];
+        return '<span class="word-hl" onclick="showPopup(event,\''+esc(tok)+'\',\''+esc(kwKey)+'\',\''+esc(d.zh)+'\',\''+esc(d.p)+'\',\''+esc(d.ex)+'\')">'+tok+'</span>';
+      }
+      if(kwKey&&!hlOn){
+        const d=a.kw[kwKey];
+        return '<span class="art-word" onclick="showPopup(event,\''+esc(tok)+'\',\''+esc(kwKey)+'\',\''+esc(d.zh)+'\',\''+esc(d.p)+'\',\''+esc(d.ex)+'\')">'+tok+'</span>';
+      }
+      return '<span class="art-word" onclick="showPopup(event,\''+esc(tok)+'\',\''+esc(bare)+'\',\'\',\'\',\'\')">'+tok+'</span>';
+    }).join('')+'</p>';
+  }).join('');
+}
+
+function showPopup(e,display,word,zh,phonetic,example){
+  e.stopPropagation();
+  const popup=document.getElementById('word-popup');
+  const cleanD=display.replace(/^[^a-zA-Z']+|[^a-zA-Z']+$/g,'')||display;
+  popW=cleanD;
+  // Position popup
+  const px=Math.min(Math.max(e.clientX-20,8),window.innerWidth-300);
+  const py=Math.max(e.clientY-175,8);
+  popup.style.left=px+'px'; popup.style.top=py+'px'; popup.style.display='block';
+
+  const already=vocabWords.some(v=>v.word.toLowerCase()===cleanD.toLowerCase());
+  const ab=document.getElementById('pop-add');
+  ab.textContent=already?t('vocab_added'):t('vocab_add');
+  ab.className='pb add'+(already?' added':'');
+
+  if(zh||phonetic){
+    // Built-in data — display immediately
+    document.getElementById('pop-w').textContent=cleanD;
+    document.getElementById('pop-p').textContent=phonetic||'';
+    document.getElementById('pop-z').textContent=zh;
+    document.getElementById('pop-e').textContent=example?'e.g. '+example:'';
+  } else {
+    // No built-in data — show loading state then query DeepSeek
+    document.getElementById('pop-w').textContent=cleanD;
+    document.getElementById('pop-p').textContent='…';
+    document.getElementById('pop-z').textContent='查询中…';
+    document.getElementById('pop-e').textContent='';
+    lookupWord(cleanD);
+  }
+}
+
+// Word lookup cache
+const wordCache={};
+
+async function lookupWord(word){
+  const w=word.toLowerCase().trim();
+  if(!w||w.length<2)return;
+  // Check cache first
+  if(wordCache[w]){
+    fillPopup(word,wordCache[w]); return;
+  }
+  if(!DEEPSEEK_API_KEY||DEEPSEEK_API_KEY.startsWith('YOUR_')){
+    document.getElementById('pop-p').textContent='';
+    document.getElementById('pop-z').textContent='设置 API Key 后可自动查词';
+    return;
+  }
+  try{
+    const raw=await callDeepSeek(
+      'You are a concise English dictionary. Return ONLY valid JSON, no extra text.',
+      'Look up the English word "'+w+'". Return JSON: {"phonetic":"/IPA/","zh":"中文释义（5字以内）","ex":"One short example sentence."}'
+      , 120
+    );
+    const obj=safeJSON(raw);
+    wordCache[w]=obj;
+    fillPopup(word,obj);
+  }catch(err){
+    document.getElementById('pop-p').textContent='';
+    document.getElementById('pop-z').textContent='查询失败';
+  }
+}
+
+function fillPopup(word, data){
+  // Only update if popup still showing same word
+  if(document.getElementById('pop-w').textContent!==word&&
+     document.getElementById('pop-w').textContent!==word.toLowerCase())return;
+  document.getElementById('pop-p').textContent=data.phonetic||'';
+  document.getElementById('pop-z').textContent=data.zh||'';
+  document.getElementById('pop-e').textContent=data.ex?'e.g. '+data.ex:'';
+}
+function closePopup(){document.getElementById('word-popup').style.display='none';}
+function speakPopWord(){const w=document.getElementById('pop-w').textContent;if(w)speakTTS(w,0.82);}
+function addToVocab(){
+  const w=document.getElementById('pop-w').textContent.trim();
+  const zh=document.getElementById('pop-z').textContent.trim();
+  const ph=document.getElementById('pop-p').textContent.trim();
+  const ex=document.getElementById('pop-e').textContent.replace(/^e\.g\. /,'').trim();
+  if(!w)return;
+  const already=vocabWords.some(v=>v.word.toLowerCase()===w.toLowerCase());
+  if(already){showToast(t('toast_exists',w));return;}
+  vocabWords.unshift({word:w,phonetic:ph,zh:zh.startsWith('(')?'':zh,ex:ex||'',tag:'added'});
+  renderVocab();
+  // vocab count removed
+  document.getElementById('pop-add').textContent=t('vocab_added');
+  document.getElementById('pop-add').className='pb add added';
+  showToast(t('toast_added',w));saveData();
+}
+
+function toggleTrans(){
+  transShowing=!transShowing;
+  const box=document.getElementById('translation-box'),btn=document.getElementById('cn-btn');
+  if(transShowing){
+    box.style.display='block';
+    const a=articles[curArt];
+    box.innerHTML='<strong style="font-family:\'DM Mono\',monospace;font-size:.7rem;letter-spacing:1px;color:var(--muted);display:block;margin-bottom:7px;">'+(lang==='zh'?'中文翻译':'TRANSLATION')+'</strong>'+(a.transZH||a.text).replace(/\n\n/g,'<br><br>');
+    btn.textContent=t('hide_trans');btn.classList.add('on');
+  }else{box.style.display='none';btn.textContent=t('show_trans');btn.classList.remove('on');}
+}
+function toggleHL(){
+  hlOn=!hlOn;loadArticle(curArt,null);buildArtPills();
+  document.getElementById('hl-btn').textContent=hlOn?t('hide_hl'):t('show_hl');
+}
+
+function getBestVoice(){
+  const vs=window.speechSynthesis.getVoices();
+  const en=vs.filter(v=>v.lang&&v.lang.startsWith('en'));
+  return en.find(v=>v.name.includes('Google')&&v.lang==='en-US')||en.find(v=>v.name.includes('Samantha'))||en.find(v=>v.lang==='en-US')||en.find(v=>v.name.toLowerCase().includes('english'))||en[0]||null;
+}
+function speakTTS(text,rate){
+  rate=rate||0.88;
+  if(!('speechSynthesis' in window))return null;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US';u.rate=rate;u.pitch=1.0;
+  function doSpeak(){const v=getBestVoice();if(v)u.voice=v;setTimeout(()=>window.speechSynthesis.speak(u),50);}
+  window.speechSynthesis.getVoices().length>0?doSpeak():(window.speechSynthesis.onvoiceschanged=()=>{doSpeak();window.speechSynthesis.onvoiceschanged=null;});
+  return u;
+}
+
+function toggleSpeakArt(){
+  const btn=document.getElementById('speak-art-btn');
+  if(artSpeaking){stopArtSpeech();return;}
+  const u=speakTTS(articles[curArt].titleEN+'. '+articles[curArt].text,0.88);
+  if(u){artSpeaking=true;btn.textContent=t('stop_reading');btn.classList.add('on');u.onend=stopArtSpeech;}
+}
+function stopArtSpeech(){
+  window.speechSynthesis&&window.speechSynthesis.cancel();
+  artSpeaking=false;const b=document.getElementById('speak-art-btn');
+  if(b){b.textContent=t('read_aloud');b.classList.remove('on');}
+}
+
+function showReadQ(){
+  const a=articles[curArt],box=document.getElementById('q-box'),inner=document.getElementById('q-inner');
+  readAns={};box.style.display='block';
+  inner.innerHTML=a.qs.map((q,qi)=>'<div class="question"><p>'+(qi+1)+'. '+q.q+'</p><div class="options">'+q.opts.map((o,oi)=>'<button class="option" onclick="pickReadAns(this,'+qi+','+oi+','+q.ans+')">'+o+'</button>').join('')+'</div></div>').join('');
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function pickReadAns(btn,qi,oi,ans){
+  btn.closest('.options').querySelectorAll('.option').forEach(b=>b.classList.remove('correct','wrong'));
+  btn.classList.add('correct');readAns[qi]={chosen:oi,ans};
+  // immediately show right/wrong
+  btn.closest('.options').querySelectorAll('.option').forEach((b,i)=>{b.classList.remove('correct','wrong');if(i===ans)b.classList.add('correct');else if(i===oi&&oi!==ans)b.classList.add('wrong');});
+}
+function checkReadQ(){
+  articles[curArt].qs.forEach((_,qi)=>{
+    const opts=document.querySelectorAll('#q-inner .question:nth-child('+(qi+1)+') .option');
+    opts.forEach((b,i)=>{b.classList.remove('correct','wrong');if(i===articles[curArt].qs[qi].ans)b.classList.add('correct');else if(readAns[qi]&&i===readAns[qi].chosen&&i!==articles[curArt].qs[qi].ans)b.classList.add('wrong');});
+  });
+}
+function nextArt(){const n=(curArt+1)%articles.length;loadArticle(n,null);buildArtPills();}
+
+// ============================================================
+// SPEAKING
+// ============================================================
+function buildScenarioGrid(){
+  const grid=document.getElementById('scene-grid');if(!grid)return;
+  grid.innerHTML=scenarios.map((s,i)=>{
+    const isAI=!!s.isAI;
+    const isToday=i===todaySceneIdx;
+    // For AI scenarios use the prompt as the title (trimmed)
+    // For builtin scenarios use the fixed name lists
+    const builtinNamesEN=['Self-Introduction','Ordering Food','Asking Directions','Making a Call','Meeting People','At the Airport','Complimenting','Describing Hometown'];
+    const builtinNamesZH=['自我介绍','购物点餐','问路指路','电话沟通','认识朋友','机场出行','称赞朋友','描述家乡'];
+    const nameEN=isAI?(s.promptEN.replace(/[.!?].*$/,'').slice(0,32)+(s.promptEN.length>32?'…':'')):(builtinNamesEN[i]||'Scenario '+(i+1));
+    const nameZH=isAI?(s.promptZH.replace(/[。！？].*$/,'').slice(0,10)+(s.promptZH.length>10?'…':'')):(builtinNamesZH[i]||'场景'+(i+1));
+    const badge=isAI
+      ?'<span class="today-badge" style="background:var(--accent2);">'+(lang==='zh'?'AI':'AI')+'</span>'
+      :isToday?'<span class="today-badge">'+(lang==='zh'?'今日':'Today')+'</span>':'';
+    return '<div class="scenario-card'+(i===curScene?' active':'')+'" onclick="pickScene('+i+',this)">'
+      +'<h4>'+(lang==='zh'?nameZH:nameEN)+badge+'</h4>'
+      +'</div>';
+  }).join('');
+}
+function pickScene(idx,el,silent){
+  curScene=idx;
+  document.querySelectorAll('.scenario-card').forEach(c=>c.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const s=scenarios[idx];
+  document.getElementById('speak-prompt').textContent=lang==='zh'?s.promptZH:s.promptEN;
+  document.getElementById('speak-zh').textContent=lang==='zh'?s.promptEN:s.promptZH;
+  document.getElementById('frames').innerHTML=s.frames.map(f=>'<div class="frame" onclick="speakFrame(this)">'+f.en+'<div class="zh-hint">'+f.zh+'</div></div>').join('');
+  document.getElementById('mic-label').textContent=t('mic_ready');
+  if(!silent){document.getElementById('feedback-box').classList.remove('show');stopAllShadow();}
+}
+function speakFrame(el){const d=document.createElement('div');d.innerHTML=el.innerHTML;const h=d.querySelector('.zh-hint');if(h)h.remove();speakTTS(d.textContent.trim(),0.85);}
+function toggleMic(){
+  micOn=!micOn;const btn=document.getElementById('mic-btn'),lbl=document.getElementById('mic-label'),timer=document.getElementById('mic-timer'),waves=document.querySelectorAll('.wave-bar');
+  if(micOn){btn.classList.add('recording');btn.textContent='STOP';lbl.textContent=t('mic_recording');timer.classList.add('active');micSecs=0;waves.forEach(w=>w.classList.add('active'));micTimer=setInterval(()=>{micSecs++;timer.textContent=String(Math.floor(micSecs/60)).padStart(2,'0')+':'+String(micSecs%60).padStart(2,'0');},1000);}
+  else{btn.classList.remove('recording');btn.textContent='REC';lbl.textContent=t('mic_done');timer.classList.remove('active');clearInterval(micTimer);waves.forEach(w=>w.classList.remove('active'));document.getElementById('feedback-box').classList.add('show');}
+}
+function toggleShadow(spd){
+  const btnId=spd==='slow'?'sh-slow':'sh-norm',btn=document.getElementById(btnId);
+  if(shadowState[spd]){window.speechSynthesis.cancel();shadowState[spd]=false;btn.classList.remove('playing');btn.textContent=t(spd==='slow'?'shadow_slow':'shadow_normal');return;}
+  stopAllShadow();
+  const frames=scenarios[curScene].frames.map(f=>{const d=document.createElement('div');d.innerHTML=f.en;const h=d.querySelector('.zh-hint');if(h)h.remove();return d.textContent.trim();});
+  const u=speakTTS(frames.join('. '),spd==='slow'?0.72:0.97);
+  if(u){shadowState[spd]=true;btn.classList.add('playing');btn.textContent=t(spd==='slow'?'shadow_stop_slow':'shadow_stop_norm');u.onend=()=>{shadowState[spd]=false;btn.classList.remove('playing');btn.textContent=t(spd==='slow'?'shadow_slow':'shadow_normal');};}
+}
+function stopAllShadow(){window.speechSynthesis&&window.speechSynthesis.cancel();['slow','normal'].forEach(s=>{shadowState[s]=false;const b=document.getElementById(s==='slow'?'sh-slow':'sh-norm');if(b){b.classList.remove('playing');b.textContent=t(s==='slow'?'shadow_slow':'shadow_normal');}});}
+
+// ============================================================
+// VOCAB
+// ============================================================
+function stripPinyin(zh){if(!zh)return zh;return zh.replace(/\s*\([^)]*\)/g,'').trim();}
+
+function renderVocab(){
+  const grid=document.getElementById('vocab-grid');if(!grid)return;
+  grid.innerHTML=vocabWords.map((v,i)=>{
+    const isMastered=!!v.mastered;
+    const tagLabel=isMastered?'✓ 已掌握':(v.tag==='new'?'新词':'待复习');
+    const tagClass=isMastered?'tag-mastered':'tag-new';
+    return '<div class="vocab-card'+(isMastered?' mastered-today':'')+'" data-idx="'+i+'" onclick="speakVocabWord(this)">'
+      +'<span class="vocab-tag '+tagClass+'">'+tagLabel+'</span>'
+      +'<div class="vocab-word">'+v.word+'</div>'
+      +'<div class="vocab-phonetic">'+v.phonetic+'</div>'
+      +'<div class="vocab-zh">'+stripPinyin(v.zh)+'</div>'
+      +'<div class="vocab-example">"'+v.ex+'"</div>'
+      +'</div>';
+  }).join('');
+}
+function speakVocabWord(el){const idx=parseInt(el.getAttribute('data-idx'));const w=vocabWords[idx];if(w&&w.word)speakTTS(w.word,0.80);}
+
+// ============================================================
+// VOCAB TEST
+// ============================================================
+function startVTest(mode){
+  vtMode=mode;vtIdx=0;vtCorrect=0;
+  vtWords=[...vocabWords].sort(()=>Math.random()-.5).slice(0,Math.min(10,vocabWords.length));
+  vtTotal=vtWords.length;
+  document.getElementById('vtest-modal').classList.add('open');
+  document.getElementById('vt-title').textContent=t(mode==='spell'?'vt_spell_title':'vt_pronun_title');
+  document.getElementById('vt-sub').textContent=t(mode==='spell'?'vt_spell_sub':'vt_pronun_sub');
+  document.getElementById('spell-area').style.display=mode==='spell'?'block':'none';
+  document.getElementById('pronun-area').style.display=mode==='pronun'?'block':'none';
+  document.getElementById('vt-check-btn').style.display=mode==='spell'?'inline-flex':'none';
+  loadVTest();
+}
+function loadVTest(){
+  if(vtIdx>=vtTotal){
+    if(vtMode==='spell'){document.getElementById('vt-prompt-spell').textContent=lang==='zh'?'测试完成！':'Test Complete!';document.getElementById('vt-hint-spell').textContent='';document.getElementById('vt-input').style.display='none';document.getElementById('vt-fb-spell').textContent='';}
+    else{document.getElementById('vt-word-pronun').textContent=lang==='zh'?'测试完成！':'Test Complete!';document.getElementById('vt-meaning-pronun').textContent='';document.querySelector('#pronun-area .pronun-area').style.display='none';}
+    document.getElementById('vt-score').textContent=(lang==='zh'?'得分：':'Score: ')+vtCorrect+' / '+vtTotal;
+    saveData();return;
+  }
+  const w=vtWords[vtIdx];
+  document.getElementById('vt-score').textContent=(vtIdx+1)+' / '+vtTotal+'  ·  '+(lang==='zh'?'正确：':'Correct: ')+vtCorrect;
+  if(vtMode==='spell'){
+    document.getElementById('vt-input').style.display='block';
+    document.getElementById('vt-input').value='';
+    document.getElementById('vt-input').className='vtest-input';
+    document.getElementById('vt-fb-spell').textContent='';
+    document.getElementById('vt-fb-spell').className='vtest-feedback';
+    document.getElementById('vt-prompt-spell').textContent=stripPinyin(w.zh);
+    document.getElementById('vt-hint-spell').textContent=w.phonetic+' · '+w.ex;
+    document.getElementById('vt-input').focus();
+  }else{
+    document.getElementById('vt-word-pronun').textContent=w.word;
+    document.getElementById('vt-meaning-pronun').textContent=stripPinyin(w.zh);
+    document.getElementById('pronun-listen-btn').textContent=t('pronun_hear');
+    document.getElementById('pronun-instruction').textContent=t('pronun_instruction');
+    document.getElementById('pronun-rec-btn').className='pronun-record-btn';
+    document.getElementById('pronun-rec-icon').textContent='●';
+    document.getElementById('pronun-rec-label').textContent=t('pronun_rec_start');
+    document.getElementById('pronun-fb').textContent='';
+    document.getElementById('pronun-fb').className='pronun-feedback';
+    document.querySelector('#pronun-area .pronun-area').style.display='block';
+    pronunRecActive=false;
+    const hasSR=('webkitSpeechRecognition' in window)||('SpeechRecognition' in window);
+    const uEl=document.getElementById('sr-unavail');
+    if(!hasSR){uEl.style.display='block';uEl.textContent=t('pronun_no_sr');}else{uEl.style.display='none';}
+    setTimeout(()=>speakTTS(w.word,0.75),400);
+  }
+}
+function checkSpell(){
+  const inp=document.getElementById('vt-input');
+  const guess=inp.value.trim().toLowerCase();
+  const correct=vtWords[vtIdx].word.toLowerCase();
+  const fb=document.getElementById('vt-fb-spell');
+  if(guess===correct){
+    inp.className='vtest-input right';fb.className='vtest-feedback ok';fb.textContent='正确！';
+    vtCorrect++;
+    markWordMastered(vtWords[vtIdx].word);
+  }else{
+    inp.className='vtest-input wrong';fb.className='vtest-feedback no';
+    fb.textContent='正确答案：'+vtWords[vtIdx].word;
+  }
+  setTimeout(()=>{vtIdx++;loadVTest();},1500);
+}
+function listenPronun(){const w=vtWords[vtIdx];if(w)speakTTS(w.word,0.75);}
+function togglePronunRec(){
+  const hasSR=('webkitSpeechRecognition' in window)||('SpeechRecognition' in window);
+  if(!hasSR){document.getElementById('pronun-fb').className='pronun-feedback no';document.getElementById('pronun-fb').textContent=t('pronun_no_sr');return;}
+  if(pronunRecActive){if(pronunRecognizer)try{pronunRecognizer.stop();}catch(e){}pronunRecActive=false;document.getElementById('pronun-rec-btn').className='pronun-record-btn';document.getElementById('pronun-rec-icon').textContent='●';document.getElementById('pronun-rec-label').textContent=t('pronun_rec_start');return;}
+  pronunRecActive=true;
+  document.getElementById('pronun-rec-btn').className='pronun-record-btn rec';
+  document.getElementById('pronun-rec-icon').textContent='■';
+  document.getElementById('pronun-rec-label').textContent=t('pronun_rec_stop');
+  document.getElementById('pronun-fb').className='pronun-feedback neutral';
+  document.getElementById('pronun-fb').textContent=t('pronun_listening');
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  pronunRecognizer=new SR();pronunRecognizer.lang='en-US';pronunRecognizer.continuous=false;pronunRecognizer.interimResults=false;pronunRecognizer.maxAlternatives=5;
+  pronunRecognizer.onresult=(event)=>{
+    pronunRecActive=false;document.getElementById('pronun-rec-btn').className='pronun-record-btn';document.getElementById('pronun-rec-icon').textContent='●';document.getElementById('pronun-rec-label').textContent=t('pronun_rec_start');
+    const target=vtWords[vtIdx].word.toLowerCase();let bestScore=0;
+    for(let i=0;i<event.results[0].length;i++){const heard=event.results[0][i].transcript.toLowerCase().trim().replace(/[^a-z]/g,'');const conf=event.results[0][i].confidence;const score=calcPronunScore(target,heard,conf);if(score>bestScore)bestScore=score;}
+    const fb=document.getElementById('pronun-fb');
+    if(bestScore>=0.75){fb.className='pronun-feedback ok';fb.textContent=t('pronun_great');vtCorrect++;setTimeout(()=>{vtIdx++;loadVTest();},1600);}
+    else if(bestScore>=0.4){fb.className='pronun-feedback ok';fb.textContent=t('pronun_good');vtCorrect+=0.5;setTimeout(()=>{vtIdx++;loadVTest();},1800);}
+    else{fb.className='pronun-feedback no';fb.textContent=t('pronun_practice');}
+  };
+  pronunRecognizer.onerror=(event)=>{
+    pronunRecActive=false;document.getElementById('pronun-rec-btn').className='pronun-record-btn';document.getElementById('pronun-rec-icon').textContent='●';document.getElementById('pronun-rec-label').textContent=t('pronun_rec_start');
+    const fb=document.getElementById('pronun-fb');fb.className='pronun-feedback no';
+    if(event.error==='not-allowed')fb.textContent=lang==='zh'?'麦克风权限被拒绝。':'Microphone permission denied.';
+    else if(event.error==='no-speech')fb.textContent=lang==='zh'?'没有检测到声音，请再试。':'No speech detected, please try again.';
+    else fb.textContent=lang==='zh'?'识别出错，请再试。':'Recognition error, please try again.';
+  };
+  pronunRecognizer.onend=()=>{if(pronunRecActive){pronunRecActive=false;document.getElementById('pronun-rec-btn').className='pronun-record-btn';document.getElementById('pronun-rec-icon').textContent='●';document.getElementById('pronun-rec-label').textContent=t('pronun_rec_start');}};
+  try{pronunRecognizer.start();}catch(e){pronunRecActive=false;document.getElementById('pronun-rec-btn').className='pronun-record-btn';}
+}
+function calcPronunScore(target,heard,confidence){
+  if(target===heard)return Math.max(confidence,0.9);
+  const m=target.length,n=heard.length;if(!n)return 0;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i===0?j:j===0?i:0));
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=target[i-1]===heard[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return (1-dp[m][n]/Math.max(m,n))*Math.max(confidence,0.5);
+}
+function nextVTest(){vtIdx++;loadVTest();}
+function closeVTest(){document.getElementById('vtest-modal').classList.remove('open');if(pronunRecognizer)try{pronunRecognizer.stop();}catch(e){}pronunRecActive=false;saveData();}
+
+// ============================================================
+// LISTENING — no MF, only curated slow-English clips
+// ============================================================
+function buildListenPills(){
+  const c=document.getElementById('listen-pills');if(!c)return;
+  // Only 2 tabs: Slow English | NCE2
+  const hasNCE2=listeningClips.some(cl=>cl.isNCE2);
+  const slowLabel=lang==='zh'?'慢速英语':'Slow English';
+  const nceLabel=lang==='zh'?'新概念英语 2':'NCE Book 2';
+  let tabs='<button class="listen-pill active" id="pill-slow" onclick="filterListenCards(\"slow\",this)">'+slowLabel+'</button>';
+  if(hasNCE2)tabs+='<button class="listen-pill" id="pill-nce2" onclick="filterListenCards(\"nce2\",this)" style="border-color:#d8b4fe;color:#5a2a7a;">'+nceLabel+'</button>';
+  c.innerHTML=tabs;
+}
+function scrollToListenCard(idx,btn){
+  document.querySelectorAll('.listen-pill').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const card=document.getElementById('listen-card-'+idx);
+  if(card)card.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderListenCards(){
+  const c=document.getElementById('listen-cards-container');if(!c)return;
+  let html='';
+  let nce2Started=false;
+  listeningClips.forEach((clip,idx)=>{
+    const isNCE2=!!clip.isNCE2;
+    // Insert section divider before first NCE2 card
+    if(isNCE2&&!nce2Started){
+      nce2Started=true;
+      html+='<div id="nce2-divider" style="display:flex;align-items:center;gap:10px;margin:28px 0 14px;">'
+        +'<div style="height:1.5px;flex:1;background:var(--border);"></div>'
+        +'<span style="font-family:\'DM Mono\',monospace;font-size:.72rem;letter-spacing:2px;color:#5a2a7a;background:#f3e8ff;padding:3px 12px;border-radius:20px;border:1px solid #d8b4fe;">'+(lang==='zh'?'新概念英语 2':'NEW CONCEPT ENGLISH 2')+'</span>'
+        +'<div style="height:1.5px;flex:1;background:var(--border);"></div>'
+      +'</div>';
+    }
+    const spd=audioSpeeds[idx]||0.85;
+    const hasTransZH=!!clip.transZH;
+    html+='<div class="listen-card" id="listen-card-'+idx+'" data-nce2="'+(isNCE2?'1':'0')+'">'
+      +'<h3>'+(lang==='zh'?clip.titleZH:clip.titleEN)
+        +(isNCE2?'<span class="today-badge" style="background:#5a2a7a;margin-left:8px;">NCE2</span>':'')
+      +'</h3>'
+      +'<div class="listen-meta"><span>'+clip.level+'</span><span id="dur-label-'+idx+'">--:--</span></div>'
+      +'<div class="audio-player">'
+        +'<button class="play-btn" id="play-btn-'+idx+'" onclick="toggleAudio('+idx+')">&#9654;</button>'
+        +'<div class="audio-info">'
+          +'<div class="audio-title">'+(lang==='zh'?clip.titleZH:clip.titleEN)+'</div>'
+          +'<div class="audio-bar" onclick="seekAudio('+idx+',event)"><div class="audio-progress" id="prog-'+idx+'"></div></div>'
+          +'<div class="audio-time" id="time-'+idx+'">0:00 / --</div>'
+        +'</div>'
+        +'<div class="speed-btns">'
+          +'<button class="speed-btn'+(spd<=0.8?' active':'')+'" onclick="setSpeed('+idx+',0.8,this)">0.8x</button>'
+          +'<button class="speed-btn'+(spd>=1.0&&spd<1.2?' active':'')+'" onclick="setSpeed('+idx+',1.0,this)">1.0x</button>'
+          +'<button class="speed-btn'+(spd>=1.2?' active':'')+'" onclick="setSpeed('+idx+',1.2,this)">1.2x</button>'
+        +'</div>'
+      +'</div>'
+      +'<div class="listen-controls">'
+        +'<button class="ctrl-btn" onclick="toggleTranscript('+idx+')">'+(lang==='zh'?'文字稿':'Transcript')+'</button>'
+        +(hasTransZH?'<button class="ctrl-btn" onclick="toggleTranslation('+idx+')">'+(lang==='zh'?'中文翻译':'Translation')+'</button>':'')
+        +'<button class="ctrl-btn" onclick="toggleListenQ('+idx+')">'+(lang==='zh'?'听力测试':'Quiz')+'</button>'
+      +'</div>'
+      +'<div class="listen-transcript" id="transcript-'+idx+'">'
+        +'<strong style="font-family:\'DM Mono\',monospace;font-size:.7rem;letter-spacing:1px;color:var(--muted);display:block;margin-bottom:7px;">'+(lang==='zh'?'文字稿':'TRANSCRIPT')+'</strong>'
+        +clip.transcript
+      +'</div>'
+      +(hasTransZH?'<div class="listen-transcript" id="translation-'+idx+'" style="border-left-color:var(--accent2);">'
+        +'<strong style="font-family:\'DM Mono\',monospace;font-size:.7rem;letter-spacing:1px;color:var(--muted);display:block;margin-bottom:7px;">中文翻译</strong>'
+        +clip.transZH
+      +'</div>':'')
+      +'<div class="listen-q-box" id="listen-q-'+idx+'">'
+        +'<h4>'+(lang==='zh'?'听力测试':'Listening Quiz')+'</h4>'
+        +clip.qs.map((q,qi)=>'<div class="question" style="'+(qi>0?'margin-top:10px':'')+'"><p>'+(qi+1)+'. '+q.q+'</p><div class="options">'+q.opts.map((o,oi)=>'<button class="option" onclick="answerLQ(this,'+(oi===q.ans)+')">'+o+'</button>').join('')+'</div></div>').join('')
+      +'</div>'
+    +'</div>';
+  });
+  c.innerHTML=html;
+}
+
+function toggleTranslation(idx){document.getElementById('translation-'+idx).classList.toggle('show');}
+function filterListenCards(cat, btn){
+  document.querySelectorAll('.listen-pill').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  // Show/hide card elements and divider based on category
+  document.querySelectorAll('.listen-card').forEach(card=>{
+    const idx=parseInt(card.id.replace('listen-card-',''));
+    const clip=listeningClips[idx];
+    if(!clip)return;
+    const isNCE2=!!clip.isNCE2;
+    card.style.display=(cat==='slow'&&!isNCE2)||(cat==='nce2'&&isNCE2)?'block':'none';
+  });
+  // Show/hide the NCE2 divider
+  const divider=document.getElementById('nce2-divider');
+  if(divider)divider.style.display=cat==='nce2'?'block':'none';
+  // Scroll to top of section
+  document.getElementById('listening').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+
+// ── Multi-voice dialogue detection ──────────────────────────
+// Detects "SpeakerName: dialogue text" pattern.
+// Each unique speaker gets a distinct voice (pitch/rate variation).
+function parseDialogue(transcript){
+  // Match lines like "Name: text" or "Name (role): text"
+  const lines = transcript.split(/(?<=[.!?])\s+(?=[A-Z][a-zA-Z ]{1,20}:)|\n/);
+  const dialogueRe = /^([A-Z][a-zA-Z ]{1,20})(?:\s*\([^)]+\))?:\s*(.+)$/;
+  const parsed = [];
+  const speakerMap = {};
+  let speakerCount = 0;
+  let isDialogue = false;
+
+  for (const line of lines) {
+    const m = line.trim().match(dialogueRe);
+    if (m) {
+      isDialogue = true;
+      const speaker = m[1].trim();
+      const text = m[2].trim();
+      if (!(speaker in speakerMap)) {
+        speakerMap[speaker] = speakerCount++;
+      }
+      parsed.push({ speaker, speakerIdx: speakerMap[speaker], text });
+    } else if (line.trim()) {
+      parsed.push({ speaker: null, speakerIdx: -1, text: line.trim() });
+    }
+  }
+  return isDialogue && parsed.some(p => p.speaker) ? parsed : null;
+}
+
+// Get a voice variant for a speaker index
+// Speaker 0: default voice, normal pitch
+// Speaker 1: slightly higher pitch (female-ish)
+// Speaker 2: lower pitch
+function getSpeakerParams(speakerIdx, baseRate) {
+  const variants = [
+    { pitch: 0.95, rate: baseRate },        // Speaker 0 — normal
+    { pitch: 1.25, rate: baseRate * 0.96 }, // Speaker 1 — higher
+    { pitch: 0.75, rate: baseRate * 1.02 }, // Speaker 2 — lower
+    { pitch: 1.10, rate: baseRate * 0.98 }, // Speaker 3
+  ];
+  return variants[speakerIdx % variants.length];
+}
+
+function playDialogueSequence(parts, baseRate, idx) {
+  if (!parts || !parts.length) return null;
+  const vs = window.speechSynthesis.getVoices().filter(v => v.lang && v.lang.startsWith('en'));
+  const baseVoice = vs.find(v=>v.name.includes('Google')&&v.lang==='en-US')
+    || vs.find(v=>v.name.includes('Samantha'))
+    || vs.find(v=>v.lang==='en-US')
+    || vs[0] || null;
+
+  let partIdx = 0;
+  const totalWords = parts.reduce((s, p) => s + p.text.split(/\s+/).length, 0);
+  const dur = Math.round((totalWords / (150 * baseRate)) * 60);
+  audioDurCache[idx] = dur;
+  const lbl = document.getElementById('dur-label-'+idx);
+  if (lbl) lbl.textContent = fmt(dur);
+
+  function speakNext() {
+    if (!audioPlaying[idx] || partIdx >= parts.length) return;
+    const part = parts[partIdx++];
+    const params = getSpeakerParams(part.speakerIdx >= 0 ? part.speakerIdx : 0, baseRate);
+    const u = new SpeechSynthesisUtterance(part.text);
+    u.lang = 'en-US';
+    u.rate = params.rate;
+    u.pitch = params.pitch;
+    if (baseVoice) u.voice = baseVoice;
+    u.onend = () => {
+      if (partIdx >= parts.length) {
+        // All done
+        clearInterval(audioTimers[idx]);
+        audioPlaying[idx] = false;
+        document.getElementById('play-btn-'+idx).innerHTML = '&#9654;';
+        document.getElementById('prog-'+idx).style.width = '100%';
+        document.getElementById('time-'+idx).textContent = fmt(dur)+' / '+fmt(dur);
+        progress.listen_done = Math.max(progress.listen_done||0,1);
+        updateDayProgress(); saveData();
+      } else {
+        speakNext();
+      }
+    };
+    setTimeout(() => window.speechSynthesis.speak(u), 30);
+  }
+
+  // First utterance — return a control object
+  audioPlaying[idx] = true; audioSecs[idx] = 0;
+  document.getElementById('play-btn-'+idx).innerHTML = '&#9646;&#9646;';
+  clearInterval(audioTimers[idx]);
+  audioTimers[idx] = setInterval(() => {
+    audioSecs[idx]++;
+    const pct = Math.min(100, (audioSecs[idx] / dur) * 100);
+    document.getElementById('prog-'+idx).style.width = pct+'%';
+    document.getElementById('time-'+idx).textContent = fmt(audioSecs[idx])+' / '+fmt(dur);
+    if (audioSecs[idx] >= dur) { clearInterval(audioTimers[idx]); }
+  }, 1000);
+
+  if (window.speechSynthesis.getVoices().length > 0) {
+    speakNext();
+  } else {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.onvoiceschanged = null;
+      speakNext();
+    };
+  }
+}
+
+function toggleAudio(idx){
+  if(audioPlaying[idx]){
+    window.speechSynthesis.cancel();
+    audioPlaying[idx]=false;
+    clearInterval(audioTimers[idx]);
+    document.getElementById('play-btn-'+idx).innerHTML='&#9654;';
+    return;
+  }
+  // Stop any other playing clips
+  listeningClips.forEach((_,i)=>{
+    if(audioPlaying[i]&&i!==idx){
+      window.speechSynthesis.cancel();
+      audioPlaying[i]=false;
+      clearInterval(audioTimers[i]);
+      document.getElementById('play-btn-'+i).innerHTML='&#9654;';
+    }
+  });
+
+  const transcript = listeningClips[idx].transcript;
+  const rate = audioSpeeds[idx] || 0.9;
+
+  // Try dialogue detection first
+  const dialogueParts = parseDialogue(transcript);
+  if (dialogueParts && dialogueParts.length > 1) {
+    // Multi-voice dialogue playback
+    playDialogueSequence(dialogueParts, rate, idx);
+    return;
+  }
+
+  // Single-voice fallback (monologue)
+  const u = speakTTS(transcript, rate);
+  if(!u)return;
+  audioPlaying[idx]=true; audioSecs[idx]=0;
+  document.getElementById('play-btn-'+idx).innerHTML='&#9646;&#9646;';
+  const wc = transcript.split(/\s+/).length;
+  const dur = Math.round((wc/(150*rate))*60);
+  audioDurCache[idx]=dur;
+  const lbl=document.getElementById('dur-label-'+idx);if(lbl)lbl.textContent=fmt(dur);
+  clearInterval(audioTimers[idx]);
+  audioTimers[idx]=setInterval(()=>{
+    audioSecs[idx]++;
+    const pct=Math.min(100,(audioSecs[idx]/dur)*100);
+    document.getElementById('prog-'+idx).style.width=pct+'%';
+    document.getElementById('time-'+idx).textContent=fmt(audioSecs[idx])+' / '+fmt(dur);
+    if(audioSecs[idx]>=dur){clearInterval(audioTimers[idx]);audioPlaying[idx]=false;document.getElementById('play-btn-'+idx).innerHTML='&#9654;';}
+  },1000);
+  u.onend=()=>{
+    clearInterval(audioTimers[idx]);audioPlaying[idx]=false;
+    document.getElementById('play-btn-'+idx).innerHTML='&#9654;';
+    document.getElementById('prog-'+idx).style.width='100%';
+    document.getElementById('time-'+idx).textContent=fmt(dur)+' / '+fmt(dur);
+    progress.listen_done=Math.max(progress.listen_done||0,1);updateDayProgress();saveData();
+  };
+}
+function setSpeed(idx,spd,btn){
+  audioSpeeds[idx]=spd;
+  btn.closest('.speed-btns').querySelectorAll('.speed-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(audioPlaying[idx]){toggleAudio(idx);setTimeout(()=>toggleAudio(idx),350);}
+}
+function seekAudio(idx,e){const pct=e.offsetX/e.currentTarget.offsetWidth;audioSecs[idx]=Math.floor(pct*(audioDurCache[idx]||60));document.getElementById('prog-'+idx).style.width=(pct*100)+'%';}
+function toggleTranscript(idx){document.getElementById('transcript-'+idx).classList.toggle('show');}
+function toggleListenQ(idx){document.getElementById('listen-q-'+idx).classList.toggle('show');}
+function answerLQ(btn,isCorrect){
+  const opts=btn.closest('.options').querySelectorAll('.option');
+  opts.forEach(b=>b.classList.remove('correct','wrong'));
+  if(isCorrect)btn.classList.add('correct');
+  else{btn.classList.add('wrong');opts.forEach(b=>{if(b.getAttribute('onclick').includes('true'))b.classList.add('correct');});}
+}
+
+// ============================================================
+// PHONICS — Fix #1: speak phoneme name FIRST then examples
+// speakPhoneme(phonemeName, exampleWords)
+// e.g. speakPhoneme('ae', 'cat bad man') → says "aeh... cat... bad... man"
+// ============================================================
+
+
+
+// ============================================================
+// UTILS
+// ============================================================
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2400);}
+
+
+
+// ============================================================
+// 词汇系统 — AI 每日推送 B1 单词 + 拼写测试进度追踪
+//
+// 规则：
+//  · 每天推送 15 个 B1 单词（由 DeepSeek 生成）
+//  · 当天必须完成全部单词的拼写测试才算"通过"
+//  · 未完成的单词第二天补推（补推数 = 上一日未完成数）
+//  · 完成所有当日单词后，才推送下一批新词
+// ============================================================
+
+// 词汇进度存储
+function vocabProgressKey(){return 'eu_vocab_progress';}
+function vocabWordsKey(date){return 'eu_vocab_words_'+date;}
+
+// 加载词汇进度
+function loadVocabProgress(){
+  try{
+    const r=localStorage.getItem(vocabProgressKey());
+    return r?JSON.parse(r):{};
+  }catch(e){return {};}
+}
+function saveVocabProgress(p){
+  try{localStorage.setItem(vocabProgressKey(),JSON.stringify(p));}catch(e){}
+}
+
+// 计算今天应该推送的单词数
+// 规则：15 - 昨日已完成数 + 昨日未完成的补推
+function calcTodayTarget(progress){
+  const today=getTodayStr();
+  const yesterday=new Date(new Date()-86400000).toISOString().slice(0,10);
+  const yProg=progress[yesterday];
+  if(!yProg){return 15;} // 第一天或昨天没有数据
+  const yDone=yProg.done||0;
+  const yTarget=yProg.target||15;
+  const carry=Math.max(0,yTarget-yDone); // 昨日未完成数
+  return Math.min(15,carry+(15-carry)); // 始终15个，其中carry个是补推旧词
+}
+
+// 获取昨日未完成的单词（需要补推的词）
+function getCarryWords(progress){
+  const yesterday=new Date(new Date()-86400000).toISOString().slice(0,10);
+  const yProg=progress[yesterday];
+  if(!yProg||!yProg.words)return [];
+  return yProg.words.filter(w=>!w.mastered);
+}
+
+// 今日词汇主函数
+async function initDailyVocab(){
+  const today=getTodayStr();
+  const progress=loadVocabProgress();
+
+  // 检查今日词汇是否已缓存
+  const todayCached=progress[today];
+  if(todayCached&&todayCached.words&&todayCached.words.length>0){
+    vocabWords=todayCached.words;
+    renderVocab();
+    updateVocabHeader(progress);
+    return;
+  }
+
+  // 计算需要生成的新词数量
+  const carryWords=getCarryWords(progress);
+  const newWordsNeeded=Math.max(0,15-carryWords.length);
+
+  if(newWordsNeeded===0){
+    // 全部是补推词，不需要生成新词
+    const todayWords=carryWords.map(w=>({...w,mastered:false,attempts:0}));
+    progress[today]={date:today,target:15,done:0,words:todayWords};
+    saveVocabProgress(progress);
+    vocabWords=todayWords;
+    renderVocab();
+    updateVocabHeader(progress);
+    return;
+  }
+
+  setBanner('vocab','loading','⟳ AI 正在生成今日词汇（'+newWordsNeeded+' 个新词）…');
+
+  // Already-seen words to avoid repeats
+  const seenWords=Object.values(progress).flatMap(d=>(d.words||[]).map(w=>w.word)).slice(-100);
+
+  if(!DEEPSEEK_API_KEY||DEEPSEEK_API_KEY.startsWith('YOUR_')){
+    setBanner('vocab','warn','请设置 DeepSeek API Key 以启用每日词汇推送');
+    // Use fallback words
+    const fallback=getFallbackVocab(newWordsNeeded);
+    const todayWords=[...carryWords,...fallback].slice(0,15);
+    vocabWords=todayWords;
+    renderVocab();
+    return;
+  }
+
+  const sys='You are an English vocabulary teacher. Return ONLY valid JSON, no markdown, no extra text.';
+  const usr=`Generate ${newWordsNeeded} B1-level English vocabulary words for a Chinese learner.
+
+Return a JSON array of exactly ${newWordsNeeded} objects:
+[
+  {
+    "word": "accomplish",
+    "phonetic": "/əˈkɒmplɪʃ/",
+    "zh": "完成；实现",
+    "ex": "She accomplished her goal.",
+    "tag": "new"
+  }
+]
+
+Rules:
+- B1 level: useful everyday/professional words, not too simple (avoid: big, good, run) and not too rare
+- Avoid these already-seen words: ${seenWords.slice(-30).join(', ')||'none'}
+- phonetic must be valid IPA notation
+- ex must be a short, natural example sentence using the word
+- zh must be concise accurate Chinese (10 characters max)
+- tag must be "new" for all`;
+
+  try{
+    const raw=await callDeepSeek(sys,usr,1200);
+    const arr=safeJSON(raw);
+    if(!Array.isArray(arr))throw new Error('not array');
+    const newWords=arr.slice(0,newWordsNeeded).map(w=>({
+      word:w.word||'',phonetic:w.phonetic||'',zh:w.zh||'',
+      ex:w.ex||'',tag:'new',mastered:false,attempts:0
+    }));
+    const todayWords=[...carryWords.map(w=>({...w,mastered:false,attempts:0})),...newWords].slice(0,15);
+    progress[today]={date:today,target:todayWords.length,done:0,words:todayWords};
+    saveVocabProgress(progress);
+    vocabWords=todayWords;
+    renderVocab();
+    updateVocabHeader(progress);
+    setBanner('vocab','done','✦ 今日 '+todayWords.length+' 个词汇已推送');
+  }catch(e){
+    console.warn('Vocab gen error:',e.message);
+    setBanner('vocab','warn','词汇生成失败，使用备用词库');
+    const fallback=getFallbackVocab(newWordsNeeded);
+    const todayWords=[...carryWords,...fallback].slice(0,15);
+    vocabWords=todayWords;
+    renderVocab();
+  }
+}
+
+function getFallbackVocab(n){
+  const pool=[
+    {word:'efficient',phonetic:'/ɪˈfɪʃənt/',zh:'高效的',ex:'She is very efficient at work.',tag:'new',mastered:false,attempts:0},
+    {word:'opportunity',phonetic:'/ˌɒpəˈtjuːnɪti/',zh:'机会',ex:'This is a great opportunity.',tag:'new',mastered:false,attempts:0},
+    {word:'significant',phonetic:'/sɪɡˈnɪfɪkənt/',zh:'重要的',ex:'This is a significant change.',tag:'new',mastered:false,attempts:0},
+    {word:'demonstrate',phonetic:'/ˈdemənstreɪt/',zh:'展示；证明',ex:'Please demonstrate the process.',tag:'new',mastered:false,attempts:0},
+    {word:'perspective',phonetic:'/pəˈspektɪv/',zh:'观点；视角',ex:'From my perspective, it works.',tag:'new',mastered:false,attempts:0},
+    {word:'consequence',phonetic:'/ˈkɒnsɪkwəns/',zh:'后果',ex:'Think about the consequences.',tag:'new',mastered:false,attempts:0},
+    {word:'establish',phonetic:'/ɪˈstæblɪʃ/',zh:'建立；确立',ex:'We need to establish trust.',tag:'new',mastered:false,attempts:0},
+    {word:'investigate',phonetic:'/ɪnˈvestɪɡeɪt/',zh:'调查',ex:'They investigated the accident.',tag:'new',mastered:false,attempts:0},
+    {word:'approximately',phonetic:'/əˈprɒksɪmətli/',zh:'大约；近似地',ex:'It takes approximately one hour.',tag:'new',mastered:false,attempts:0},
+    {word:'communicate',phonetic:'/kəˈmjuːnɪkeɪt/',zh:'沟通；交流',ex:'We communicate by email.',tag:'new',mastered:false,attempts:0},
+    {word:'environment',phonetic:'/ɪnˈvaɪrənmənt/',zh:'环境',ex:'Protect the environment.',tag:'new',mastered:false,attempts:0},
+    {word:'recognize',phonetic:'/ˈrekəɡnaɪz/',zh:'认出；承认',ex:'I recognized his voice.',tag:'new',mastered:false,attempts:0},
+    {word:'encourage',phonetic:'/ɪnˈkʌrɪdʒ/',zh:'鼓励',ex:'She encouraged me to try.',tag:'new',mastered:false,attempts:0},
+    {word:'available',phonetic:'/əˈveɪləbl/',zh:'可用的；有空的',ex:'Is this seat available?',tag:'new',mastered:false,attempts:0},
+    {word:'professional',phonetic:'/prəˈfeʃənl/',zh:'专业的',ex:'She looks very professional.',tag:'new',mastered:false,attempts:0},
+  ];
+  return pool.slice(0,n);
+}
+
+function updateVocabHeader(progress){
+  const today=getTodayStr();
+  const todayProg=progress[today]||{done:0,target:15};
+  const done=todayProg.done||0;
+  const target=todayProg.target||15;
+  const scoreEl=document.getElementById('vdh-score');
+  const labelEl=document.getElementById('vdh-score-label');
+  if(scoreEl)scoreEl.textContent=done+' / '+target;
+  if(labelEl)labelEl.textContent=done===target?'✓ 全部完成！':'今日完成';
+  if(scoreEl)scoreEl.style.color=done===target?'var(--accent2)':'var(--accent)';
+}
+
+// ============================================================
+// 更新拼写测试：完成后标记单词为 mastered，更新进度
+// ============================================================
+function markWordMastered(word){
+  const today=getTodayStr();
+  const progress=loadVocabProgress();
+  if(!progress[today])return;
+  const w=progress[today].words.find(x=>x.word.toLowerCase()===word.toLowerCase());
+  if(w&&!w.mastered){
+    w.mastered=true;
+    progress[today].done=(progress[today].done||0)+1;
+    saveVocabProgress(progress);
+    // Update in vocabWords array
+    const vw=vocabWords.find(x=>x.word.toLowerCase()===word.toLowerCase());
+    if(vw)vw.mastered=true;
+    updateVocabHeader(progress);
+    renderVocab();
+  }
+}
+
+// ============================================================
+// DeepSeek API — 每日全量内容生成
+// 每个自然日：
+//   · 阅读：生成 6 篇文章（4×B1 + 2×A2），完全替换内置文章库
+//   · 口语：生成 8 个场景，完全替换内置场景库
+//   · 听力（慢速英语）：生成 6 篇，完全替换内置听力库
+//   · 听力（新概念英语2）：固定按课程顺序，每天 3 课（共96课循环）
+// 所有内容按日期缓存在本地，同一天只调用一次 API
+// ============================================================
+
+// ---- API Key ----
+// 请将下方字符串替换为你的 DeepSeek API Key
+// 获取地址: https://platform.deepseek.com/api_keys
+const DEEPSEEK_API_KEY = 'YOUR_DEEPSEEK_API_KEY_HERE';
+
+// ============================================================
+// 新概念英语 2 — 全部96课（课文内容由 AI 按课题生成）
+// 每天按日期选连续3课
+// ============================================================
+const NCE2_LESSONS = [
+  // L1–L20
+  {n:1,  title:'A Private Conversation',       zh:'私人谈话'},
+  {n:2,  title:'Breakfast or Lunch?',          zh:'早餐还是午饭？'},
+  {n:3,  title:'Please Send Me a Card',        zh:'请给我寄一张明信片'},
+  {n:4,  title:'An Exciting Trip',             zh:'激动人心的旅行'},
+  {n:5,  title:'No Wrong Numbers',             zh:'没有错误的号码'},
+  {n:6,  title:'Percy Buttons',                zh:'珀西·巴顿斯'},
+  {n:7,  title:'Too Late',                     zh:'太迟了'},
+  {n:8,  title:'The Best and the Worst',       zh:'最好的和最差的'},
+  {n:9,  title:'A Cold Welcome',               zh:'冷遇'},
+  {n:10, title:'Not for Jazz',                 zh:'不适合爵士乐'},
+  {n:11, title:'One Good Turn Deserves Another',zh:'礼尚往来'},
+  {n:12, title:'Goodbye and Good Luck',        zh:'再见，一路顺风'},
+  {n:13, title:'The Valuable Cat',             zh:'值钱的猫'},
+  {n:14, title:'Do You Speak English?',        zh:'你会说英语吗？'},
+  {n:15, title:'Good News',                    zh:'好消息'},
+  {n:16, title:'A Polite Request',             zh:'礼貌的请求'},
+  {n:17, title:'Always Young',                 zh:'永远年轻'},
+  {n:18, title:'He Often Does This!',          zh:'他经常这样！'},
+  {n:19, title:'Sold Out',                     zh:'票已售完'},
+  {n:20, title:'One Man in a Boat',            zh:'独坐孤舟'},
+  // L21–L40
+  {n:21, title:'Mad or Not?',                  zh:'究竟是不是疯子？'},
+  {n:22, title:'A Glass Envelope',             zh:'玻璃信封'},
+  {n:23, title:'A New House',                  zh:'新居'},
+  {n:24, title:'It Could Be Worse',            zh:'不幸中之万幸'},
+  {n:25, title:'Do the English Speak English?',zh:'英国人说英语吗？'},
+  {n:26, title:'The Best Art Critics',         zh:'最佳艺术评论家'},
+  {n:27, title:'A Wet Night',                  zh:'雨夜'},
+  {n:28, title:'No Parking',                   zh:'禁止停车'},
+  {n:29, title:'Taxi!',                        zh:'出租车！'},
+  {n:30, title:'Football or Polo?',            zh:'足球还是马球？'},
+  {n:31, title:'Success Story',                zh:'成功的故事'},
+  {n:32, title:'Shopping Made Easy',           zh:'购物变得容易了'},
+  {n:33, title:'Out of the Darkness',          zh:'冲出黑暗'},
+  {n:34, title:'Quick Work',                   zh:'破案'},
+  {n:35, title:'Stop Thief!',                  zh:'抓小偷！'},
+  {n:36, title:'Across the Channel',           zh:'横渡英吉利海峡'},
+  {n:37, title:'The Olympic Games',            zh:'奥林匹克运动会'},
+  {n:38, title:'Everything Except the Weather',zh:'唯独没有考虑天气'},
+  {n:39, title:'Am I All Right?',              zh:'我会好吗？'},
+  {n:40, title:'Food and Talk',                zh:'进餐与交谈'},
+  // L41–L60
+  {n:41, title:'Do You Call That a Hat?',      zh:'你把那个叫帽子吗？'},
+  {n:42, title:'Not Very Musical',             zh:'不太懂音乐'},
+  {n:43, title:'Over the South Pole',          zh:'飞越南极'},
+  {n:44, title:'Through the Forest',           zh:'穿过森林'},
+  {n:45, title:'A Clear Conscience',           zh:'问心无愧'},
+  {n:46, title:'Expensive and Uncomfortable',  zh:'既贵又不舒适'},
+  {n:47, title:'A Thirsty Ghost',              zh:'口渴的鬼魂'},
+  {n:48, title:'Did You Want to Tell Me Something?',zh:'你想告诉我什么吗？'},
+  {n:49, title:'The End of a Dream',           zh:'美梦告终'},
+  {n:50, title:'Taken for a Ride',             zh:'乘车兜风'},
+  {n:51, title:'Reward for Virtue',            zh:'积德有报'},
+  {n:52, title:'A Pretty Carpet',              zh:'漂亮的地毯'},
+  {n:53, title:'Hot Snake',                    zh:'热惊吓'},
+  {n:54, title:'Sticky Fingers',               zh:'粘手指'},
+  {n:55, title:'Not a Gold Mine',              zh:'不是金矿'},
+  {n:56, title:'Faster Than Sound!',           zh:'比声音还快！'},
+  {n:57, title:'Can I Help You, Madam?',       zh:'夫人，我能帮您吗？'},
+  {n:58, title:'A Blessing in Disguise?',      zh:'是因祸得福吗？'},
+  {n:59, title:'In or Out?',                   zh:'进来还是出去？'},
+  {n:60, title:'The Future',                   zh:'未来'},
+  // L61–L80
+  {n:61, title:'Trouble with the Hubble',      zh:'哈勃望远镜的麻烦'},
+  {n:62, title:'After the Fire',               zh:'火灾之后'},
+  {n:63, title:'She Was Not Amused',           zh:'她并不觉得有趣'},
+  {n:64, title:'The Channel Tunnel',           zh:'英吉利海峡隧道'},
+  {n:65, title:'Jumbo Versus the Police',      zh:'小象对警察'},
+  {n:66, title:'Sweet as Honey!',              zh:'像蜜一样甜！'},
+  {n:67, title:'Volcanoes',                    zh:'火山'},
+  {n:68, title:'Persistent',                   zh:'有毅力'},
+  {n:69, title:'But Not Murder!',              zh:'但不是谋杀！'},
+  {n:70, title:'Red for Danger',               zh:'红色危险'},
+  {n:71, title:'A Famous Clock',               zh:'一座著名的大钟'},
+  {n:72, title:'A Car Called Bluebird',        zh:'叫蓝鸟的汽车'},
+  {n:73, title:'The Record-Holder',            zh:'纪录保持者'},
+  {n:74, title:'Out of the Limelight',         zh:'远离名声'},
+  {n:75, title:'SOS',                          zh:'呼救信号'},
+  {n:76, title:'April Fools\' Day',            zh:'愚人节'},
+  {n:77, title:'A Successful Operation',       zh:'成功的手术'},
+  {n:78, title:'The Last One?',                zh:'最后一个吗？'},
+  {n:79, title:'By Air',                       zh:'乘飞机'},
+  {n:80, title:'The Crystal Palace',           zh:'水晶宫'},
+  // L81–L96
+  {n:81, title:'Escape',                       zh:'出逃'},
+  {n:82, title:'Monster or Fish?',             zh:'怪兽还是鱼？'},
+  {n:83, title:'After the Storm',              zh:'暴风雨之后'},
+  {n:84, title:'From the Earth',               zh:'来自地球'},
+  {n:85, title:'Never Too Old to Learn',       zh:'活到老，学到老'},
+  {n:86, title:'Out of Luck',                  zh:'运气不佳'},
+  {n:87, title:'A Perfect Alibi',              zh:'无懈可击的不在场证明'},
+  {n:88, title:'Trapped in a Mine',            zh:'困在矿井中'},
+  {n:89, title:'A Slip of the Tongue',         zh:'口误'},
+  {n:90, title:'What\'s for Supper?',          zh:'晚餐吃什么？'},
+  {n:91, title:'Three Men in a Basket',        zh:'篮中三人'},
+  {n:92, title:'Asking for Trouble',           zh:'自找麻烦'},
+  {n:93, title:'A Noble Gangster',             zh:'高尚的歹徒'},
+  {n:94, title:'Future Champions',             zh:'未来的冠军'},
+  {n:95, title:'A Fantasy',                    zh:'幻觉'},
+  {n:96, title:'The Dead Return',              zh:'亡灵归来'}
+];
+
+// 获取今日应学的 NCE2 课程（每天3课，循环）
+function getTodayNCE2Lessons(){
+  // Day 0 = L1-3, Day 1 = L4-6, ... anchored to the user's first visit date
+  // This ensures every new learner starts from Lesson 1
+  const anchor = firstVisit || getTodayStr();
+  const base=new Date(anchor);
+  const now=new Date();
+  // Reset time to midnight for clean day diff
+  base.setHours(0,0,0,0); now.setHours(0,0,0,0);
+  const dayIdx=Math.max(0,Math.floor((now-base)/86400000));
+  const groupIdx=dayIdx%32; // 96课÷3=32组，循环
+  const start=groupIdx*3;
+  return NCE2_LESSONS.slice(start,start+3);
+}
+
+// ============================================================
+// 话题池 — 每日主题多样性
+// ============================================================
+const ART_TOPICS = [
+  ['a morning at the local market','A2'],    ['taking the subway for the first time','A2'],
+  ['learning to ride a bicycle','A2'],       ['a surprise birthday party','A2'],
+  ['ordering food at a new restaurant','A2'],['a rainy afternoon at home','A2'],
+  ['visiting a museum','A2'],                ['helping a neighbour','A2'],
+  ['a job interview','B1'],                  ['packing for a trip','A2'],
+  ['a video call with family','A2'],         ['a power cut at home','A2'],
+  ['starting a new hobby','A2'],             ['a visit to the doctor','A2'],
+  ['making a new friend','A2'],              ['a walk in the park','A2'],
+  ['cooking a new dish','A2'],               ['a weekend road trip','B1'],
+  ['moving to a new apartment','B1'],        ['a school reunion','B1'],
+  ['working from home','B1'],               ['going to the gym','A2'],
+  ['a camping trip','A2'],                   ['social media habits','B1'],
+  ['learning a new language','B1'],          ['a childhood memory','B1'],
+  ['city life vs village life','B1'],        ['a long flight','A2'],
+  ['doing grocery shopping','A2'],           ['an evening at a concert','B1']
+];
+const SPEAK_TOPICS = [
+  'asking for help in a bookshop',       'apologising for being late',
+  'giving a compliment about cooking',   'discussing weekend plans with a friend',
+  'talking about your favourite food',   'describing your hometown',
+  'planning a holiday with a friend',    'asking about local transport',
+  'inviting a colleague to lunch',       'talking about a new hobby you want to start',
+  'making a polite complaint at a hotel','arranging to meet someone',
+  'talking about your family',           'making small talk about the weather',
+  'asking for directions at a station',  'ordering at a new restaurant',
+  'talking about your dream job',        'making small talk in a lift',
+  'buying a train ticket',               'talking about studying English'
+];
+const LISTEN_TOPICS = [
+  'two friends planning a holiday',              'a local weather forecast',
+  'a radio interview about healthy eating',      'a conversation at a post office',
+  'two colleagues discussing a project',         'a tourist asking for local tips',
+  'a podcast about managing stress',             'booking a restaurant by phone',
+  'two students comparing study habits',         'a news report about a local festival',
+  'a conversation in a library',                 'a parent-teacher meeting',
+  'a travel show about Japan',                   'two people choosing a film to watch',
+  'someone describing their morning routine',    'a conversation at a lost property office',
+  'a travel agent describing a holiday package', 'an interview with a young chef',
+  'a short documentary about an unusual hobby',  'a phone call to a doctor\'s clinic'
+];
+
+function getTodayStr(){return new Date().toISOString().slice(0,10);}
+
+// 给定一个池，按日期偏移 offset 取元素（用于同一天取不同的主题）
+function pickTopic(pool, offset){
+  const base=new Date('2025-01-01');
+  const day=Math.floor((new Date()-base)/86400000);
+  return pool[(day+offset)%pool.length];
+}
+
+function cacheKey(type){return 'eu_ai2_'+type+'_'+getTodayStr();}
+
+async function loadCache(type){
+  try{const r=localStorage.getItem(cacheKey(type));if(r)return JSON.parse(r);}catch(e){}
+  try{if(window.storage){const r=await window.storage.get(cacheKey(type));if(r&&r.value)return JSON.parse(r.value);}}catch(e){}
+  return null;
+}
+async function saveCache(type,data){
+  const s=JSON.stringify(data);
+  try{localStorage.setItem(cacheKey(type),s);}catch(e){}
+  try{if(window.storage)await window.storage.set(cacheKey(type),s);}catch(e){}
+}
+
+// ── 清除今日缓存，立刻重新生成所有内容 ──
+async function clearTodayCache(){
+  const btn = document.getElementById('refresh-btn');
+  if(btn){ btn.classList.add('spinning'); btn.textContent='↺ 生成中…'; btn.disabled=true; }
+
+  const today = getTodayStr();
+  const types = ['articles_all','scenes_all','listening_all'];
+
+  // Clear localStorage
+  types.forEach(type => {
+    try{ localStorage.removeItem('eu_ai2_'+type+'_'+today); }catch(e){}
+  });
+  // Also clear NCE2 cache for today
+  try{
+    const todayLessons = getTodayNCE2Lessons();
+    localStorage.removeItem('eu_ai2_nce2_L'+todayLessons[0].n+'_'+today);
+  }catch(e){}
+
+  // Clear window.storage
+  try{
+    if(window.storage){
+      await Promise.allSettled(types.map(type =>
+        window.storage.delete('eu_ai2_'+type+'_'+today)
+      ));
+    }
+  }catch(e){}
+
+  // Reset AI state
+  aiArticles=null; aiScenes=null; aiListenings=null; aiNCE2=null;
+
+  // Restore builtin fallback content while waiting
+  articles.length=0;
+  _builtinArticles.forEach(a=>articles.push(a));
+  buildArtPills(); loadArticle(0,null);
+
+  listeningClips.length=0;
+  _builtinListening.forEach(c=>listeningClips.push(c));
+  reinitAudioState(); buildListenPills(); renderListenCards();
+
+  scenarios.length=0;
+  _builtinScenarios.forEach(s=>scenarios.push(s));
+  buildScenarioGrid(); pickScene(0,null,true);
+
+  updateHomeCards();
+
+  // Re-run all generators
+  await Promise.allSettled([
+    genAllArticles(),
+    genAllScenes(),
+    genAllListening(),
+    genNCE2Lessons()
+  ]);
+
+  if(btn){ btn.classList.remove('spinning'); btn.textContent='↺ 重新生成'; btn.disabled=false; }
+  showToast('今日内容已重新生成');
+}
+
+
+// DeepSeek chat completions
+
+function safeJSON(raw){
+  // Strip markdown fences and BOM
+  let s=raw.replace(/^\uFEFF/,'').replace(/^```json\s*/m,'').replace(/^```\s*/m,'').replace(/```\s*$/,'').trim();
+  // Try direct parse first
+  try{return JSON.parse(s);}catch(e){}
+  // If truncated, try to recover a partial array by finding last complete object
+  // Remove trailing incomplete item and close the array
+  try{
+    // Find the last complete }, or }] boundary
+    let recovered=s;
+    // Try trimming after last complete object in array: find last "}," or "}]"
+    const lastComplete=Math.max(
+      recovered.lastIndexOf('},'),
+      recovered.lastIndexOf('}]')
+    );
+    if(lastComplete>0){
+      recovered=recovered.slice(0,lastComplete+1)+']';
+      return JSON.parse(recovered);
+    }
+  }catch(e2){}
+  // Last resort: throw original error
+  throw new SyntaxError('JSON parse failed: '+s.slice(0,80));
+}
+
+// ============================================================
+// 生成全部 6 篇阅读文章
+// ============================================================
+const ART_DIFF_PLAN=['B1','B1','B1','B1','B1','B1']; // 6篇：全部B1
+
+async function genAllArticles(){
+  const cached=await loadCache('articles_all');
+  if(cached&&Array.isArray(cached)&&cached.length>=3){
+    aiArticles=cached; injectAllArticles(); return;
+  }
+
+  if(!DEEPSEEK_API_KEY||DEEPSEEK_API_KEY.startsWith('YOUR_')){
+    setBanner('article','warn','请在代码中填入 DeepSeek API Key 以启用 AI 内容生成');
+    return;
+  }
+
+  // Split into 3 batches of 2 articles to avoid token limits
+  const sys=`You are an English teacher. Return ONLY a valid JSON array of exactly 2 objects, no markdown, no extra text.`;
+
+  function makeArtPrompt(topicA, topicB, lenA, lenB){
+    return `Generate 2 B1-level English reading articles.
+
+Return JSON array of exactly 2 objects. Each has these fields:
+diff, topicEN, topicZH, wc, titleEN, titleZH, subEN, subZH, text, transZH, kw, qs.
+
+Object 1 topic: "${topicA}", ~${lenA} words.
+Object 2 topic: "${topicB}", ~${lenB} words.
+
+Format:
+[{"diff":"B1","topicEN":"2 words","topicZH":"主题","wc":"~${lenA} words","titleEN":"Title","titleZH":"标题","subEN":"Subtitle","subZH":"副标题","text":"Article body ~${lenA} words, \\n\\n for paragraphs, B1 vocabulary.","transZH":"完整中文翻译","kw":{"word1":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word2":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word3":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word4":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word5":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word6":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."}},"qs":[{"q":"Q?","opts":["A","B","C","D"],"ans":0},{"q":"Q?","opts":["A","B","C","D"],"ans":1},{"q":"Q?","opts":["A","B","C","D"],"ans":2}]},{"diff":"B1","topicEN":"2 words","topicZH":"主题","wc":"~${lenB} words","titleEN":"Title","titleZH":"标题","subEN":"Subtitle","subZH":"副标题","text":"Article body ~${lenB} words, \\n\\n for paragraphs.","transZH":"完整中文翻译","kw":{"word1":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word2":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word3":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word4":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word5":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."},"word6":{"zh":"释义","p":"/fəˈnetɪk/","ex":"Example."}},"qs":[{"q":"Q?","opts":["A","B","C","D"],"ans":0},{"q":"Q?","opts":["A","B","C","D"],"ans":1},{"q":"Q?","opts":["A","B","C","D"],"ans":2}]}]
+
+kw keys must be exact lowercase words from the text. transZH must be accurate simplified Chinese.`;
+  }
+
+  const allArticles=[];
+  const topics=ART_DIFF_PLAN.map((_,i)=>{
+    const pair=pickTopic(ART_TOPICS,i*17);
+    return Array.isArray(pair)?pair[0]:pair;
+  });
+
+  try{
+    setBanner('article','loading','⟳ 生成文章（1/3）…');
+    const r1=await callDeepSeek(sys,makeArtPrompt(topics[0],topics[1],180,180),2500);
+    const b1=safeJSON(r1); if(Array.isArray(b1))allArticles.push(...b1.slice(0,2));
+
+    setBanner('article','loading','⟳ 生成文章（2/3）…');
+    const r2=await callDeepSeek(sys,makeArtPrompt(topics[2],topics[3],280,280),3000);
+    const b2=safeJSON(r2); if(Array.isArray(b2))allArticles.push(...b2.slice(0,2));
+
+    setBanner('article','loading','⟳ 生成文章（3/3）…');
+    const r3=await callDeepSeek(sys,makeArtPrompt(topics[4],topics[5],420,420),3500);
+    const b3=safeJSON(r3); if(Array.isArray(b3))allArticles.push(...b3.slice(0,2));
+
+    if(allArticles.length<2)throw new Error('Too few articles: '+allArticles.length);
+    allArticles.forEach(a=>{a.isAI=true;a.aiDate=getTodayStr();a.diff='B1';});
+    await saveCache('articles_all',allArticles);
+    aiArticles=allArticles; injectAllArticles();
+    setBanner('article','done','✦ 今日'+allArticles.length+'篇文章已生成');
+  }catch(e){
+    console.warn('genAllArticles error:',e.message);
+    handleAIError('article',e);
+  }
+}
+// ============================================================
+// 生成全部 8 个口语场景
+// ============================================================
+async function genAllScenes(){
+  const cached=await loadCache('scenes_all');
+  if(cached&&Array.isArray(cached)&&cached.length===8){
+    aiScenes=cached; injectAllScenes(); return;
+  }
+
+  if(!DEEPSEEK_API_KEY||DEEPSEEK_API_KEY.startsWith('YOUR_')){
+    setBanner('scene','warn', lang==='zh'?'请设置 DeepSeek API Key':'Set your DeepSeek API Key');
+    return;
+  }
+  setBanner('scene','loading', lang==='zh'?'⟳ AI 正在生成今日口语场景…':'⟳ Generating speaking scenarios…');
+
+  const sys=`You are an English speaking coach. Return ONLY valid JSON array, no markdown, no extra text.`;
+  const topics=Array.from({length:8},(_,i)=>pickTopic(SPEAK_TOPICS,i*13));
+
+  const usr=`Generate 8 speaking practice scenarios for A2-B1 English learners.
+
+Return a JSON array of exactly 8 objects:
+{
+  "promptEN": "Clear one-sentence task (imperative).",
+  "promptZH": "对应中文指令。",
+  "frames": [
+    {"en":"Frame with <span class='blank'>___word___</span>.","zh":"中文框架。"},
+    {"en":"Frame with <span class='blank'>___word___</span>.","zh":"中文框架。"},
+    {"en":"Complete model sentence (no blanks).","zh":"完整中文句子。"}
+  ]
+}
+
+Topics: ${topics.map((t,i)=>`#${i+1}: "${t}"`).join(', ')}
+frames[0] and [1] have blanks, frames[2] is a complete sentence.`;
+
+  try{
+    const raw=await callDeepSeek(sys,usr,2800);
+    let arr=safeJSON(raw);
+    if(!Array.isArray(arr)||arr.length<4)throw new Error('Too few scenes: '+arr.length);
+    // Accept 4-8 scenes — pad if needed
+    if(arr.length>8)arr=arr.slice(0,8);
+    arr.forEach(s=>{s.isAI=true;s.aiDate=getTodayStr();});
+    await saveCache('scenes_all',arr);
+    aiScenes=arr; injectAllScenes();
+    setBanner('scene','done', lang==='zh'?'✦ 今日8个口语场景已生成':'✦ All 8 scenarios ready');
+  }catch(e){
+    console.warn('genAllScenes error:',e.message);
+    handleAIError('scene',e);
+  }
+}
+
+// ============================================================
+// 生成慢速英语听力 6 篇
+// ============================================================
+async function genAllListening(){
+  const cached=await loadCache('listening_all');
+  if(cached&&Array.isArray(cached)&&cached.length===6){
+    aiListenings=cached; injectAllListening(); return;
+  }
+
+  if(!DEEPSEEK_API_KEY||DEEPSEEK_API_KEY.startsWith('YOUR_')){
+    setBanner('listening','warn', lang==='zh'?'请设置 DeepSeek API Key':'Set your DeepSeek API Key');
+    return;
+  }
+
+  const sys=`You are an English listening comprehension author. Return ONLY valid JSON array of exactly 3 objects, no markdown, no extra text.`;
+
+  function makeListenPrompt(t1,t2,t3){
+    return `Generate 3 B1-level listening passages.
+
+Return JSON array of exactly 3 objects:
+[{"titleEN":"Title","titleZH":"中文标题","level":"B1","defaultSpeed":1.0,"transcript":"100-130 words. Natural spoken English, B1 vocabulary. Can be monologue or dialogue (use 'Name: text' format for dialogue).","qs":[{"q":"Q?","opts":["A","B","C"],"ans":0},{"q":"Q?","opts":["A","B","C"],"ans":1}]},...]
+
+Topics: 1="${t1}", 2="${t2}", 3="${t3}"
+All level="B1", defaultSpeed=1.0.`;
+  }
+
+  try{
+    const topics=Array.from({length:6},(_,i)=>pickTopic(LISTEN_TOPICS,i*11));
+
+    setBanner('listening','loading', lang==='zh'?'⟳ 生成听力（1/2）…':'⟳ Listening 1/2…');
+    const raw1=await callDeepSeek(sys, makeListenPrompt(topics[0],topics[1],topics[2]), 2000);
+    const batch1=safeJSON(raw1);
+
+    setBanner('listening','loading', lang==='zh'?'⟳ 生成听力（2/2）…':'⟳ Listening 2/2…');
+    const raw2=await callDeepSeek(sys, makeListenPrompt(topics[3],topics[4],topics[5]), 2000);
+    const batch2=safeJSON(raw2);
+
+    const arr=[
+      ...(Array.isArray(batch1)?batch1:[]),
+      ...(Array.isArray(batch2)?batch2:[])
+    ].slice(0,6);
+
+    if(arr.length<2)throw new Error('Too few clips: '+arr.length);
+    arr.forEach(c=>{c.isAI=true;c.aiDate=getTodayStr();c.level='B1';c.defaultSpeed=1.0;});
+    await saveCache('listening_all',arr);
+    aiListenings=arr; injectAllListening();
+    setBanner('listening','done', lang==='zh'?'✦ 听力材料已生成':'✦ Listening ready');
+  }catch(e){
+    console.warn('genAllListening error:',e.message);
+    handleAIError('listening',e);
+  }
+}
+
+// ============================================================
+// 生成今日 3 课新概念英语 2
+// ============================================================
+async function genNCE2Lessons(){
+  const todayLessons=getTodayNCE2Lessons();
+  const cacheId='nce2_L'+todayLessons[0].n+'_'+getTodayStr();
+  const cached=await loadCache(cacheId);
+  if(cached&&Array.isArray(cached)&&cached.length===3){
+    aiNCE2=cached; injectNCE2(); return;
+  }
+
+  if(!DEEPSEEK_API_KEY||DEEPSEEK_API_KEY.startsWith('YOUR_')){
+    setBanner('listening','warn', lang==='zh'?'请设置 DeepSeek API Key':'Set your DeepSeek API Key');
+    return;
+  }
+  setBanner('listening','loading', lang==='zh'?'⟳ 正在生成新概念英语2（3课）…':'⟳ Generating NCE2 lessons…');
+
+  const sys=`You are a New Concept English teacher. Return ONLY valid JSON array, no markdown, no extra text.`;
+
+  const lessonInfo=todayLessons.map(l=>`Lesson ${l.n}: "${l.title}" (${l.zh})`).join('; ');
+
+  const usr=`Generate 3 New Concept English Book 2 lessons as listening/reading passages.
+
+Lessons: ${lessonInfo}
+
+Return a JSON array of exactly 3 objects:
+{
+  "titleEN": "Lesson N: Title",
+  "titleZH": "第N课：中文标题",
+  "lessonNum": 1,
+  "level": "B1",
+  "defaultSpeed": 1.0,
+  "transcript": "Write the lesson as a short engaging story/dialogue in the style of New Concept English Book 2. 80-120 words. Keep the spirit and approximate scenario of the original NCE2 lesson — a funny or interesting short story. Use simple grammar appropriate to the lesson number (early lessons simpler).",
+  "transZH": "Complete Chinese translation of the transcript.",
+  "qs": [
+    {"q":"Question?","opts":["A","B","C"],"ans":0},
+    {"q":"Question?","opts":["A","B","C"],"ans":1}
+  ]
+}
+
+IMPORTANT: Create stories that capture the humour and style of New Concept English. Early lessons (1-30) use simple present/past. Later lessons use more complex structures.`;
+
+  try{
+    const raw=await callDeepSeek(sys,usr,2000);
+    const arr=safeJSON(raw);
+    if(!Array.isArray(arr)||arr.length<1)throw new Error('No NCE2 lessons returned');
+    arr.forEach((c,i)=>{
+      c.isAI=true; c.aiDate=getTodayStr();
+      c.isNCE2=true;
+      c.lessonNum=todayLessons[i].n;
+      c.titleEN=`Lesson ${todayLessons[i].n}: ${todayLessons[i].title}`;
+      c.titleZH=`第${todayLessons[i].n}课：${todayLessons[i].zh}`;
+      c.level=todayLessons[i].n<=40?'A2':'B1';
+      c.defaultSpeed=c.level==='A2'?0.85:1.0;
+    });
+    await saveCache(cacheId,arr);
+    aiNCE2=arr; injectNCE2();
+    setBanner('listening','done', lang==='zh'?'✦ 新概念英语2 今日3课已生成':'✦ NCE2 lessons ready');
+  }catch(e){
+    console.warn('genNCE2 error:',e.message);
+    handleAIError('listening',e);
+  }
+}
+
+// ============================================================
+// 注入：用 AI 内容完全替换内置内容
+// ============================================================
+let aiArticles=null, aiScenes=null, aiListenings=null, aiNCE2=null;
+
+function injectAllArticles(){
+  if(!aiArticles||!aiArticles.length)return;
+  // Replace entire articles array
+  articles.length=0;
+  aiArticles.forEach(a=>articles.push(a));
+  todayArtIdx=0; curArt=0;
+  buildArtPills();
+  loadArticle(0,null);
+  updateHomeCards();
+}
+
+function injectAllScenes(){
+  if(!aiScenes||!aiScenes.length)return;
+  scenarios.length=0;
+  aiScenes.forEach(s=>scenarios.push(s));
+  todaySceneIdx=0;
+  buildScenarioGrid();
+  pickScene(0,null,true);
+  updateHomeCards();
+}
+
+function injectAllListening(){
+  if(!aiListenings||!aiListenings.length)return;
+  // Replace only the slow-English clips (keep NCE2 if already loaded)
+  const nce2existing=listeningClips.filter(c=>c.isNCE2);
+  listeningClips.length=0;
+  aiListenings.forEach(c=>listeningClips.push(c));
+  nce2existing.forEach(c=>listeningClips.push(c));
+  reinitAudioState();
+  buildListenPills();
+  renderListenCards();
+  updateHomeCards();
+}
+
+function injectNCE2(){
+  if(!aiNCE2||!aiNCE2.length)return;
+  // Remove any existing NCE2 clips, add new ones at end
+  let i=listeningClips.length;
+  while(i--)if(listeningClips[i].isNCE2)listeningClips.splice(i,1);
+  aiNCE2.forEach(c=>listeningClips.push(c));
+  reinitAudioState();
+  buildListenPills();
+  renderListenCards();
+  updateHomeCards();
+}
+
+function reinitAudioState(){
+  audioPlaying.length=0; audioTimers.length=0; audioSecs.length=0;
+  audioDurCache.length=0; audioSpeeds.length=0;
+  listeningClips.forEach(c=>{
+    audioPlaying.push(false); audioTimers.push(null);
+    audioSecs.push(0); audioDurCache.push(0);
+    audioSpeeds.push(c.defaultSpeed||0.85);
+  });
+}
+
+// ============================================================
+// UI 横幅
+// ============================================================
+function handleAIError(type, e){
+  if(e.message==='NO_KEY'){
+    setBanner(type,'warn', lang==='zh'?'请在代码中填入 DeepSeek API Key（搜索 YOUR_DEEPSEEK_API_KEY_HERE 替换）':'Set your DeepSeek API Key in the code to enable AI content');
+  }else{
+    setBanner(type,'warn','AI 生成失败：'+e.message);
+  }
+}
+
+function setBanner(type, state, msg){
+  const el=document.getElementById('ai-banner-'+type);
+  if(!el)return;
+  const c={
+    loading:{bg:'#fff8e1',color:'#c17f3a',border:'rgba(193,127,58,.3)'},
+    done:   {bg:'#e8f5e9',color:'#2d6a4f',border:'rgba(74,124,111,.3)'},
+    warn:   {bg:'#fdf3e3',color:'#7a5c2a',border:'rgba(193,127,58,.2)'}
+  }[state]||{bg:'#f5f0e8',color:'#7a6f5e',border:'#d5c8b0'};
+  el.style.cssText='font-family:\'DM Mono\',monospace;font-size:.72rem;padding:5px 14px;border-radius:20px;display:inline-block;margin-bottom:12px;transition:opacity 1.5s ease;';
+  el.style.background=c.bg; el.style.color=c.color; el.style.border='1px solid '+c.border;
+  el.style.opacity='1';
+  if(msg)el.textContent=msg;
+  // Auto-hide after 5s when done; hide immediately when no key
+  if(state==='done')setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.style.display='none',1600);},4000);
+  if(state==='warn'&&msg&&msg.includes('API Key'))el.style.display='inline-block';
+}
+
+// ============================================================
+// 听力板块：更新 buildListenPills 和 renderListenCards
+// 支持两个分类：慢速英语 / 新概念英语2
+// ============================================================
+
+
+// ============================================================
+// 启动
+// ============================================================
+async function init(){
+  const saved=await loadData();
+  if(saved){
+    lang=saved.lang||'en';
+    if(saved.vocabWords&&saved.vocabWords.length)vocabWords=saved.vocabWords;
+    if(saved.progress)progress=saved.progress;
+    if(saved.firstVisit)firstVisit=saved.firstVisit;
+    if(saved.visitDates)visitDates=saved.visitDates;
+    if(saved.stats&&saved.stats.arts)progress.arts_read=saved.stats.arts;
+  }
+  initDailySystem();
+
+  todayArtIdx=getDayIndex(articles.length);
+  todaySceneIdx=getDayIndex(scenarios.length);
+  todayListenIdx=getDayIndex(listeningClips.length);
+
+  listeningClips.forEach((_,i)=>{audioPlaying[i]=false;audioTimers[i]=null;audioSecs[i]=0;audioDurCache[i]=0;audioSpeeds[i]=listeningClips[i].defaultSpeed;});
+
+  applyLang();
+  loadArticle(todayArtIdx,null);
+  buildListenPills();
+  renderListenCards();
+  await initDailyVocab();
+  pickScene(todaySceneIdx,null,true);
+  updateHomeCards();
+  updateHomeStats();
+  updateDayProgress();
+
+  if('speechSynthesis' in window){
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged=()=>{};
+  }
+  setTimeout(measureDurations,1400);
+
+  document.addEventListener('mousedown',e=>{
+    if(!e.target.closest('#word-popup')&&!e.target.closest('.art-word')&&!e.target.closest('.word-hl'))closePopup();
+  });
+
+  // 并行生成今日全部内容（非阻塞）
+  Promise.allSettled([
+    genAllArticles(),
+    genAllScenes(),
+    genAllListening(),
+    genNCE2Lessons()
+  ]);
+}
+
+
+// ── API Key management & diagnostics ──────────────────────
+function saveAPIKey(){
+  const input=document.getElementById('api-key-input');
+  const key=(input?input.value:'').trim();
+  if(!key){
+    setTestResult('fail','请输入 API Key');return;
+  }
+  if(!key.startsWith('sk-')){
+    setTestResult('fail','Key 格式不对，DeepSeek API Key 应以 sk- 开头');return;
+  }
+  // Update runtime variable
+  window._runtimeAPIKey=key;
+  // Persist in localStorage
+  try{localStorage.setItem('eu_deepseek_key',key);}catch(e){}
+  setTestResult('ok','✓ Key 已保存（仅存在本地浏览器，不会上传任何地方）');
+}
+
+function loadSavedAPIKey(){
+  try{
+    const k=localStorage.getItem('eu_deepseek_key');
+    if(k&&k.startsWith('sk-')){
+      window._runtimeAPIKey=k;
+      const inp=document.getElementById('api-key-input');
+      // Show masked version
+      if(inp)inp.value=k.slice(0,6)+'…'+k.slice(-4);
+    }
+  }catch(e){}
+}
+
+// Override callDeepSeek to also check runtime key
+const _origCallDeepSeek=callDeepSeek;
+async function callDeepSeek(system,user,maxTokens){
+  const key=window._runtimeAPIKey||DEEPSEEK_API_KEY;
+  if(!key||key.startsWith('YOUR_')){throw new Error('NO_KEY');}
+
+  // Detect file:// protocol — CORS will always fail from local file
+  if(location.protocol==='file:'){
+    throw new Error('CORS_FILE: 请用本地服务器打开文件，不能直接双击打开。见首页部署说明。');
+  }
+
+  let resp;
+  try{
+    resp=await fetch('https://api.deepseek.com/chat/completions',{
+      method:'POST',
+      mode:'cors',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({
+        model:'deepseek-chat',
+        max_tokens:maxTokens||900,
+        temperature:0.85,
+        messages:[{role:'system',content:system},{role:'user',content:user}]
+      })
+    });
+  }catch(fetchErr){
+    if(location.protocol==='file:'){
+      throw new Error('CORS_FILE: 请用本地服务器打开文件。见首页部署说明。');
+    }
+    throw new Error('网络错误（Failed to fetch）: '+fetchErr.message+' — 请检查网络连接');
+  }
+
+  if(!resp.ok){
+    const t=await resp.text();
+    let msg='HTTP '+resp.status;
+    try{const j=JSON.parse(t);msg+=': '+(j.error?.message||j.message||t.slice(0,200));}
+    catch(e){msg+=': '+t.slice(0,200);}
+    throw new Error(msg);
+  }
+  const d=await resp.json();
+  if(d.error)throw new Error(d.error.message||JSON.stringify(d.error));
+  return d.choices[0].message.content;
+}
+
+async function testAPI(){
+  const key=window._runtimeAPIKey||DEEPSEEK_API_KEY;
+  if(!key||key.startsWith('YOUR_')){
+    setTestResult('fail','未设置 API Key，请先输入并保存');return;
+  }
+  if(location.protocol==='file:'){
+    setTestResult('fail','⚠️ 你正在用 file:// 打开文件 — 浏览器会拦截所有 API 请求（CORS）。请看下方部署说明，用本地服务器打开。');
+    return;
+  }
+  setTestResult('info','⟳ 正在测试连接…');
+  try{
+    const resp=await fetch('https://api.deepseek.com/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({
+        model:'deepseek-chat',max_tokens:20,temperature:0,
+        messages:[{role:'user',content:'Say OK'}]
+      })
+    });
+    const text=await resp.text();
+    if(!resp.ok){
+      let detail=text;
+      try{const j=JSON.parse(text);detail=j.error?.message||j.message||text;}catch{}
+      setTestResult('fail','连接失败 (HTTP '+resp.status+'): '+detail);
+      return;
+    }
+    const d=JSON.parse(text);
+    if(d.error){setTestResult('fail','API 错误: '+d.error.message);return;}
+    const reply=d.choices?.[0]?.message?.content||'(no reply)';
+    setTestResult('ok','✓ 连接成功！API 回复: "'+reply+'"  |  余额请在 platform.deepseek.com 查看');
+  }catch(err){
+    setTestResult('fail','网络错误: '+err.message+' — 请检查网络或 Key 是否有效');
+  }
+}
+
+function setTestResult(type,msg){
+  const el=document.getElementById('api-test-result');
+  if(!el)return;
+  el.className='api-test-result '+type;
+  el.textContent=msg;
+}
+
+// ── Snapshot of builtin fallback content (saved before AI replaces) ──
+let _builtinArticles = [];
+let _builtinListening = [];
+let _builtinScenarios = [];
+function snapshotBuiltins(){
+  _builtinArticles = articles.map(a=>({...a}));
+  _builtinListening = listeningClips.map(c=>({...c}));
+  _builtinScenarios = scenarios.map(s=>({...s}));
+}
+
+snapshotBuiltins(); // save builtins before AI overwrites
+loadSavedAPIKey(); // restore API key from localStorage
+init();
+</script>
+
+</body>
+</html>
